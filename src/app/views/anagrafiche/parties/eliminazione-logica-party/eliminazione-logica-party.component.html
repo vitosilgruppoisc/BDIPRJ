@@ -1,0 +1,133 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-times-circle"></i> Chiusura Party </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-warning" role="alert" *ngIf="!isActive">
+                    Il party non risulta attivo e non può essere modificato.
+                </div>
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <form [formGroup]="eliminazioneForm" (ngSubmit)="onSubmit()" class="form-horizontal" #form="ngForm">
+                    <div class="form-group row">
+                        <label for="bic" class="col-2 col-form-label">BIC: </label>
+                        <div class="col-4">
+                            <input id="bic" class="form-control" [readOnly]="true" [value]="party.bic"/>
+                        </div>
+
+                        <label for="tipo" class="col-2 col-form-label">Tipo: </label>
+                        <div class="col-4">
+                            <input id="tipo" class="form-control" [readOnly]="true" [value]="party.tipoParty.descrizione"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="nome" class="col-2 col-form-label">Nome: </label>
+                        <div class="col-4">
+                            <input id="nome" class="form-control" [readOnly]="true" [value]="party.nome"/>
+                        </div>
+
+                        <label for="abi" class="col-2 col-form-label">ABI: </label>
+                        <div class="col-4">
+                            <input id="abi" class="form-control" [readOnly]="true" [value]="party.defaultAbi"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="filiale" class="col-2 col-form-label">Filiale: </label>
+                        <div class="col-4">
+                            <input id="filiale" class="form-control" [readOnly]="true" [value]="party.filialeRiferimento.descrizione"/>
+                        </div>
+
+                        <label for="mfiCode" class="col-2 col-form-label">MFI Code: </label>
+                        <div class="col-4">
+                            <input id="mfiCode" class="form-control" [readOnly]="true" [value]="party.mfiCode"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="indResidenza" class="col-2 col-form-label">Indicatore di Residenza: </label>
+                        <div class="col-4">
+                            <input id="indResidenza" class="form-control" [readOnly]="true" [value]="party.indicatoreResidenza"/>
+                        </div>
+
+                        <label for="catEconomica" class="col-2 col-form-label">Categoria Ecnomica: </label>
+                        <div class="col-4">
+                            <input id="catEconomica" class="form-control" [readOnly]="true" [value]="party.categoriaEconomica"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="dataApertura" class="col-2 col-form-label">Data Apertura: </label>
+                        <div class="col-4">
+                            <input id="dataApertura" class="form-control" [readOnly]="true" [value]="party.dataApertura"/>
+                        </div>
+
+                        <label for="dataChiusura" class="col-2 col-form-label">Data Chiusura<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group" *ngIf="!readonlyForm; else dataChiusuraT">
+                                <input id="dataChiusura" class="form-control" [class.is-invalid]="dataChiusura.invalid  && (form.submitted || (dataChiusura.dirty || dataChiusura.touched))"placeholder="yyyy-mm-dd" formControlName="dataChiusura"  bdiDatepicker #datepickerDIV="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" [minDate]="minDate"/>
+                                <div class="input-group-append" (click)="datepickerDIV.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div *ngIf="!!dataChiusura.value"  class="input-group-append" (click)="reset('dataChiusura')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+                                <div *ngIf="dataChiusura.errors?.required && form.submitted" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="dataChiusura.errors?.dateformat  && (dataChiusura.dirty || dataChiusura.touched)" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                                <div *ngIf="dataChiusura.errors?.mindate  && (dataChiusura.dirty || dataChiusura.touched)" class="invalid-feedback">
+                                    Data inferiore al limite inferiore consentito ({{minDateField}}): {{formatterUtils.dateToString(minDate)}}
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #dataChiusuraT>
+                            <input class="form-control" [value]="getDataChiusuraValue()" [readOnly]="true"/>
+                        </ng-template>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="dataInizioValidita" class="col-2 col-form-label">Data Inizio Validità: </label>
+                        <div class="col-4">
+                            <input id="dataInizioValidita" class="form-control" [readOnly]="true" [value]="party.validFrom"/>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                        </div>
+                        <div class="col-6"></div>
+
+                        <div class="col-3">
+                            <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Salva</button>
+                        </div>
+                    </div>
+                </form>
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+

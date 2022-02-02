@@ -1,0 +1,86 @@
+<app-header [navbarBrandRouterLink]="['/']" [fixed]="true"
+            [navbarBrandFull]="{src: 'assets/images/logo.png', width: 146, height: 41, alt: 'GEPA Anagrafiche Logo'}"
+            [navbarBrandMinimized]="{src: 'assets/images/logo-small.png', width: 40, height: 40, alt: 'GEPA Anagrafiche Logo'}"
+            [sidebarToggler]="'lg'" [asideMenuToggler]="false" [envNavbarColorClass]="envNavbarColorClass">
+    <ul class="nav navbar-nav d-md-down-none">
+        <!--
+        <li class="nav-item px-3" *ngIf="dataOperativa">
+            <a class="nav-link" title="Data operativa">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="user-text"> Data operativa: {{ dataOperativa }}</span>
+            </a>
+        </li>
+        -->
+        <li class="nav-item px-3" *ngIf="environment">
+            <a class="nav-link" title="Ambiente">
+                <i class="fas fa-compass"></i>
+                <span class="user-text"> {{ environment }}</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav ml-auto">
+        <li *ngIf="username" class="nav-item rounded-pill border border-2 bg-dark">
+            <a class="nav-link">
+                <img [src]="getUserAvatarImage()" class="img-avatar" alt="User avatar" />
+                <strong class="username">{{username}}</strong>
+            </a>
+        </li>
+        <li *ngIf="roles" class="nav-item">
+            <a class="nav-link" title="Ruoli utente corrente">
+                <i class="fas fa-user-tag mr-3 ml-3" aria-hidden="true"></i>
+                <span *ngFor="let role of roles" class="user-text">{{role}} </span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <!--
+            <a class="nav-link" title="Informazioni sul Sistema" (click)="openAppInfoDialog()">
+                <i class="fa fa-info-circle mr-3" id="appInfo" aria-hidden="true"></i>
+            </a>
+            -->
+        </li>
+    </ul>
+</app-header>
+
+<div class="app-body">
+    <app-sidebar [fixed]="true" [display]="'lg'">
+        <app-sidebar-nav [navItems]="navItems" [perfectScrollbar] [disabled]="sidebarMinimized"></app-sidebar-nav>
+        <app-sidebar-minimizer></app-sidebar-minimizer>
+    </app-sidebar>
+    <!-- Main content -->
+    <main class="main">
+        <loki-breadcrumb>
+            <!-- Breadcrumb Menu-->
+        </loki-breadcrumb>
+        <div class="container-fluid">
+            <router-outlet></router-outlet>
+        </div><!-- /.container-fluid -->
+    </main>
+</div>
+
+<gepa-footer>
+    <div class="footer-dark shadow-lg">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6 col-md-1 item">
+                    <img class="mt-2" src="assets/images/logo-bdi.png">
+                </div>
+                <div class="col-md-8 item text">
+                    <h3>GEPA - Gestione Pagamenti</h3>
+                    <ul>
+                        <li><i class="fas fa-crown"></i> Servizio Sistema dei Pagamenti</li>
+                        <li><i class="fas fa-laptop-code"></i> Servizio Sviluppo Informatico - Divisione Applicazioni Istituzionali</li>
+                    </ul>
+                    <p></p>
+                </div>
+                <!--
+                <div class="col-sm-6 col-md-3 item">
+                    <h3>Risorse Utili</h3>
+                    <ul>
+                        <li><a href="https://www.google.it" target="_blank">insert_any_here</a></li>
+                    </ul>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+</gepa-footer>

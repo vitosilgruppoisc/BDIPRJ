@@ -1,0 +1,17 @@
+<span>
+    <button class="btn btn-sm btn-link p-1" *ngIf="!!this.actionRenderModel.detailButton"   [disabled]="!this.actionRenderModel.detailButton.enabled" [title]="this.actionRenderModel.detailButton.label" (click)="navigate(this.actionRenderModel.detailButton.routerLink, this.actionRenderModel.detailButton.params, this.actionRenderModel.detailButton.sessionKey)">
+        <i class="far fa-file-alt"></i>
+    </button>
+    <button class="btn btn-sm btn-link p-1" *ngIf="!!this.actionRenderModel.modifyButton"   [disabled]="!this.actionRenderModel.modifyButton.enabled" [title]="this.actionRenderModel.modifyButton.label" (click)="navigate(this.actionRenderModel.modifyButton.routerLink, this.actionRenderModel.modifyButton.params, this.actionRenderModel.modifyButton.sessionKey)">
+        <i class="fas fa-edit"></i>
+    </button>
+    <button class="btn btn-sm btn-link p-1" *ngIf="!!this.actionRenderModel.deleteButton"   [disabled]="!this.actionRenderModel.deleteButton.enabled" [title]="this.actionRenderModel.deleteButton.label" (click)="navigate(this.actionRenderModel.deleteButton.routerLink, this.actionRenderModel.deleteButton.params, this.actionRenderModel.deleteButton.sessionKey)">
+        <i class="far fa-times-circle"></i>
+    </button>
+    <button class="btn btn-sm btn-link p-1" *ngIf="!!this.actionRenderModel.eraseButton"   [disabled]="!this.actionRenderModel.eraseButton.enabled" [title]="this.actionRenderModel.eraseButton.label" (click)="navigate(this.actionRenderModel.eraseButton.routerLink, this.actionRenderModel.eraseButton.params, this.actionRenderModel.eraseButton.sessionKey)">
+        <i class="fas fa-trash"></i>
+    </button>
+    <button class="btn btn-sm btn-link p-1" *ngIf="!!this.actionRenderModel.selectButton"   [disabled]="!this.actionRenderModel.selectButton.enabled" [title]="this.actionRenderModel.selectButton.label" (click)="navigate(this.actionRenderModel.selectButton.routerLink, this.actionRenderModel.selectButton.params, this.actionRenderModel.selectButton.sessionKey)">
+        <i class="fas fa-hand-pointer"></i>
+    </button>
+</span>

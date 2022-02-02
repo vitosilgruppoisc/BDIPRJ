@@ -1,0 +1,21 @@
+/* Foglio di Stile globale dell'applicazione.
+L'ordine degli import e' rispettato fedelmente nella build.
+*/
+
+// Stili esportati dal Kit Bdi - include Bootstrap
+@import '../node_modules/scam-bdi-uikit/uikit';
+// Line Icons
+@import '../node_modules/simple-line-icons/css/simple-line-icons.css';
+
+// Stile del tema Loki
+@import 'assets/styles/loki-theme';
+
+// Stili specifici per singola applicazione
+@import 'assets/styles/custom-styles';
+
+// Override di classi derivate da Bootstrap o librerie di terze parti
+@import 'assets/styles/override-styles';
+
+// Hacks temporanei
+@import 'assets/styles/hacks';
+

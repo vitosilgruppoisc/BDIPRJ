@@ -1,0 +1,57 @@
+.ag-header-cell-label .ag-header-icon.ag-sort-order {
+    font-size: 9px;
+    padding-top: 10px;
+}
+
+.form-control:disabled, .form-control[readOnly] {
+    -webkit-user-select: all;  /* Chrome all / Safari all */
+    -moz-user-select: all;     /* Firefox all */
+    -ms-user-select: all;      /* IE 10+ */
+    user-select: all;         /* Likely future */
+}
+
+.username {
+    color: white;
+    padding-right: 10px;
+}
+
+.panel-background {
+    background-color: #00000008;
+    border-radius: 6px;
+}
+
+.date-field-box {
+    /*border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    background-clip:padding-box;
+    */
+}
+
+.tooltip-class-custom {
+    background-color: red !important;
+    z-index: 1000 !important;
+}
+
+.env-navbar {
+  height: 60px  !important;
+  width: 100%  !important;
+  justify-content: flex-start !important;
+  padding-left: 5px !important;
+}
+
+.env-navbar-blue {
+  background-color: #004072 !important;
+}
+
+.env-navbar-green {
+  /*background-color: #3a9d5d !important;*/
+  background-color: #8fd19e !important;
+}
+
+.header-fixed .app-body {
+  margin-top: 115px !important;
+}
+
+.app-header {
+  height: 115px  !important;
+}

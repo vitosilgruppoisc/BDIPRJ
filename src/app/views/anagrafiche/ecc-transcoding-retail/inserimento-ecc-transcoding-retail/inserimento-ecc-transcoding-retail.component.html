@@ -1,0 +1,153 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-plus-square"></i> Nuova Eccezione Transcodifica Dettaglio </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <form [formGroup]="inserimentoForm" (ngSubmit)="saveEccTranscodingRetail()" class="form-horizontal" #form="ngForm">
+
+                    <div class="form-group row">
+                        <label for="nsc" class="col-2 col-form-label">Nsc<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="nsc" class="form-control" [class.is-invalid]="nsc.invalid && (form.submitted || (nsc.dirty || nsc.touched))" formControlName="nsc" maxlength="10" [readOnly]="readonlyForm "/>
+                                <div *ngIf="nsc.errors?.required && (form.submitted || (nsc.dirty || nsc.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="nsc.errors?.pattern && (form.submitted || (nsc.dirty || nsc.touched))" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="countryCode" class="col-2 col-form-label">Country Code<span>*</span>:</label>
+                        <div class="col-4">
+                            <select *ngIf="!readonlyForm; else countryCodeTemp" id="countryCode" class="form-control" [class.is-invalid]="countryCode.invalid && (form.submitted || (countryCode.dirty || countryCode.touched))" formControlName="countryCode">
+                                <option [ngValue]="null">Seleziona</option>
+                                <option *ngFor="let c of countryCodeList" [value]="c.codice">{{c.descrizione}}</option>
+                            </select>
+                            <div *ngIf="countryCode.errors?.required && (form.submitted || (countryCode.dirty || countryCode.touched))" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                            <ng-template #countryCodeTemp>
+                                <input class="form-control" [value]="getCountryCodeValue()" [readOnly]="true"/>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="bic" class="col-2 col-form-label">Bic<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="bic" class="form-control" [class.is-invalid]="bic.invalid && (form.submitted || (bic.dirty || bic.touched))" formControlName="bic" [readOnly]="readonlyForm" toUppercase/>
+                                <div *ngIf="bic.errors?.required && (form.submitted || (bic.dirty || bic.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="bic.errors?.syntax && (form.submitted || (bic.dirty || bic.touched))" class="invalid-feedback">
+                                    Campo sintatticamente non valido
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="descrizione" class="col-2 col-form-label">Descrizione:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="descrizione" class="form-control" [class.is-invalid]="descrizione.invalid && (descrizione.dirty || descrizione.touched)" formControlName="descrizione" maxlength="4000" [readOnly]="readonlyForm"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="dataInizioValidita" class="col-2 col-form-label">Data Inizio Validità<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group" *ngIf="!readonlyForm; else inputdataInizioValidita">
+                                <input id="dataInizioValidita" class="form-control" [class.is-invalid]="dataInizioValidita.invalid && (form.submitted || (dataInizioValidita.dirty || dataInizioValidita.touched))" placeholder="yyyy-mm-dd" formControlName="dataInizioValidita"  bdiDatepicker #datepickerDA="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                <div *ngIf="!readonlyForm" class="input-group-append" (click)="datepickerDA.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div  *ngIf="!!dataInizioValidita.value && !readonlyForm"  class="input-group-append" (click)="reset('dataInizioValidita')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+
+                                <div *ngIf="dataInizioValidita.errors?.required && (form.submitted || (dataInizioValidita.dirty || dataInizioValidita.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="dataInizioValidita.errors?.dateformat && (form.submitted || (dataInizioValidita.dirty || dataInizioValidita.touched))" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                                <div *ngIf="dataInizioValidita.errors?.daterange && (form.submitted || (dataInizioValidita.dirty || dataInizioValidita.touched))" class="invalid-feedback">
+                                    Intervallo non valido
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #inputdataInizioValidita>
+                            <input class="form-control" [value]="getDataInizioValiditaValue()" [readOnly]="true"/>
+                        </ng-template>
+
+                        <label for="dataFineValidita" class="col-2 col-form-label">Data Fine Validità<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group" *ngIf="!readonlyForm; else inputdataFineValidita">
+                                <input id="dataFineValidita" class="form-control" [class.is-invalid]="dataFineValidita.invalid && (form.submitted || (dataFineValidita.dirty || dataFineValidita.touched))" placeholder="yyyy-mm-dd" formControlName="dataFineValidita"  bdiDatepicker #datepickerDC="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" [minDate]="minDate"/>
+                                <div *ngIf="!readonlyForm" class="input-group-append" (click)="datepickerDC.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div  *ngIf="!!dataFineValidita.value && !readonlyForm"  class="input-group-append" (click)="reset('dataFineValidita')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+                                <div *ngIf="dataFineValidita.errors?.required && (form.submitted || (dataFineValidita.dirty || dataFineValidita.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="dataFineValidita.errors?.dateformat  && (dataFineValidita.dirty || dataFineValidita.touched)" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                                <div *ngIf="dataFineValidita.errors?.daterange  && (dataFineValidita.dirty || dataFineValidita.touched)" class="invalid-feedback">
+                                    Intervallo non valido
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #inputdataFineValidita>
+                            <input class="form-control" [value]="getDataFineValiditaValue()" [readOnly]="true"/>
+                        </ng-template>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                        </div>
+                        <div class="col-6"></div>
+
+                        <div class="col-3" *ngIf="!readonlyForm">
+                            <button class="btn btn-block btn-primary" type="submit">Salva</button>
+                        </div>
+
+                        <div class="col-3" *ngIf="readonlyForm">
+                            <button class="btn btn-block btn-primary" type="button" (click)="resetForm()">Nuovo Inserimento</button>
+                        </div>
+                    </div>
+                </form>
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+

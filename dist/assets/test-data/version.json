@@ -1,0 +1,8 @@
+{
+	"name": "gepa-conti-loro-web",
+	"version": "0.0.1",
+	"build": {
+		"type": "fake-ui-build-type",
+		"timestamp": "20200511-0900"
+	}
+}

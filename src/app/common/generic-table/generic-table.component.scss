@@ -1,0 +1,40 @@
+.drop-show {
+  padding: 4px;
+  width: 222px;
+  background-color: #FFF;
+  border: 1px solid #BABABA;
+  position: absolute;
+  z-index: 100;
+  -webkit-box-shadow: 0 6px 10px rgba(0,0,0,.15);
+  -moz-box-shadow: 0 6px 10px rgba(0,0,0,.15);
+  box-shadow: 0 6px 10px rgba(0,0,0,.15);
+  margin-left: 1px;
+}
+.drop-show label{
+  display:block;
+  font-size:10px;
+  cursor: pointer;
+  color: rgb(0,0,0, 0.5);
+}
+.drop-show label input{
+  vertical-align: top;
+}
+.drop-show label span{
+  display:inline-block;
+}
+
+.column-selection{
+  z-index: 20;
+}
+
+/*adattamento ag grid in card*/
+.ag-layout-auto-height .ag-center-cols-clipper, .ag-layout-auto-height .ag-center-cols-container, .ag-layout-print .ag-center-cols-clipper, .ag-layout-print .ag-center-cols-container {
+  min-height: 45px !important;
+}
+
+.ag-center-cols-viewport {
+  width: 100%;
+  overflow-x: inherit !important;
+}
+
+

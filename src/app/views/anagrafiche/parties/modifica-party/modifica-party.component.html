@@ -1,0 +1,277 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-edit"></i> Modifica Party </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-warning" role="alert" *ngIf="!isActive">
+                    Il party non risulta attivo e non può essere modificato.
+                </div>
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <form [formGroup]="modificaForm" (ngSubmit)="onSubmit()" class="form-horizontal" #form="ngForm">
+
+                    <div class="form-group row">
+                        <label for="bic" class="col-2 col-form-label">Bic<span>*</span>:</label>
+                        <div class="col-3">
+                            <input id="bic" class="form-control" [class.is-invalid]="bic.invalid && form.submitted" formControlName="bic" maxlength="11" [pattern]="'^[a-zA-Z0-9]+$'" [readOnly]="!checkedbic.value || readonlyForm"/>
+                            <div *ngIf="bic.errors?.required" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                            <div *ngIf="bic.errors?.syntax && form.submitted" class="invalid-feedback">
+                                Campo non valido
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkedbic" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedbic" type="checkbox" formControlName="checkedbic"  [attr.disabled]="true">
+                            </label>
+                        </div>
+
+                        <label for="tipo" class="col-2 col-form-label">Tipo Party<span>*</span>:</label>
+                        <div class="col-3">
+                            <select *ngIf="(checkedtipo.value && !readonlyForm); else inputTipo" id="tipo" class="form-control" [class.is-invalid]="tipo.invalid && form.submitted" formControlName="tipo">
+                                <option [ngValue]="undefined">Seleziona</option>
+                                <option *ngFor="let t of tipiParty" [value]="t.codice">{{t.descrizione}}</option>
+                            </select>
+                            <div *ngIf="tipo.errors?.required && form.submitted" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+                        <ng-template #inputTipo>
+                            <input class="form-control" [value]="getTipoValue()" [readOnly]="true"/>
+                        </ng-template>
+                        <div class="col-1">
+                            <label for="checkedtipo" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedtipo" type="checkbox" formControlName="checkedtipo" [attr.disabled]="true"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="nome" class="col-2 col-form-label">Nome<span>*</span>:</label>
+                        <div class="col-3">
+                            <input id="nome" class="form-control" [class.is-invalid]="nome.invalid && form.submitted" formControlName="nome" maxlength="4000" [readOnly]="!checkednome.value || readonlyForm"/>
+                            <div *ngIf="nome.errors?.required && form.submitted" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkednome" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkednome" type="checkbox" formControlName="checkednome" (click)="manageCheckBox('nome')"/>
+                            </label>
+                        </div>
+
+                        <label for="abi" class="col-2 col-form-label">Abi<span>*</span>:</label>
+                        <div class="col-3">
+                            <input id="abi" class="form-control" [class.is-invalid]="defaultAbi.invalid && form.submitted" formControlName="defaultAbi" maxlength="5" [pattern]="'^([0-9]){5}$'" [readOnly]="!checkeddefaultAbi.value || readonlyForm"/>
+                            <div *ngIf="defaultAbi.errors?.pattern && form.submitted" class="invalid-feedback">
+                                Campo non valido
+                            </div>
+                            <div *ngIf="defaultAbi.errors?.required && form.submitted" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkeddefaultAbi" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkeddefaultAbi" type="checkbox" formControlName="checkeddefaultAbi" (click)="manageCheckBox('defaultAbi')"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="filiale" class="col-2 col-form-label">Filiale<span>*</span>:</label>
+                        <div class="col-3">
+                            <select *ngIf="(checkedfiliale.value &&!readonlyForm); else inputFiliale" id="filiale" class="form-control" [class.is-invalid]="filiale.invalid && form.submitted" formControlName="filiale">
+                                <option [ngValue]="undefined">Seleziona</option>
+                                <option *ngFor="let f of filialiRiferimento" [value]="f.codice">{{f.sigla}}</option>
+                            </select>
+                            <div *ngIf="filiale.errors?.required && form.submitted" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+                        <ng-template #inputFiliale>
+                            <input class="form-control" [value]="getFilialeValue()" [readOnly]="true"/>
+                        </ng-template>
+                        <div class="col-1">
+                            <label for="checkedfiliale" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedfiliale" type="checkbox" formControlName="checkedfiliale" (click)="manageCheckBox('filialeRiferimento')" >
+                            </label>
+                        </div>
+
+                        <label for="mfiCode" class="col-2 col-form-label">MFI Code<span>*</span>:</label>
+                        <div class="col-3">
+                            <input id="mfiCode" class="form-control" [class.is-invalid]="mfiCode.invalid && form.submitted" formControlName="mfiCode" maxlength="160" [pattern]="'^[a-zA-Z0-9]+$'" [readOnly]="!checkedmfiCode.value || readonlyForm"/>
+                            <div *ngIf="mfiCode.errors?.pattern && form.submitted" class="invalid-feedback">
+                                Campo non valido
+                            </div>
+                            <div *ngIf="mfiCode.errors?.required && form.submitted" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkedmfiCode" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedmfiCode" type="checkbox" formControlName="checkedmfiCode" (click)="manageCheckBox('mfiCode')">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="indicatoreResidenza" class="col-2 col-form-label">Indicatore di Residenza:</label>
+                        <div class="col-3">
+                            <input id="indicatoreResidenza" class="form-control" [class.is-invalid]="indicatoreResidenza.invalid && (indicatoreResidenza.dirty || indicatoreResidenza.touched)" formControlName="indicatoreResidenza" [readOnly]="!checkedindicatoreResidenza.value"/>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkedindicatoreResidenza" class="ol-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedindicatoreResidenza" type="checkbox" formControlName="checkedindicatoreResidenza" [attr.disabled]="true">
+                            </label>
+                        </div>
+
+                        <label for="categoriaEconomica" class="col-2 col-form-label">Categoria Economica:</label>
+                        <div class="col-3">
+                            <input id="categoriaEconomica" class="form-control" [class.is-invalid]="categoriaEconomica.invalid && (categoriaEconomica.dirty || categoriaEconomica.touched)" formControlName="categoriaEconomica" [readOnly]="!checkedcategoriaEconomica.value"/>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkedcategoriaEconomica" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedcategoriaEconomica" type="checkbox" formControlName="checkedcategoriaEconomica" [attr.disabled]="true">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="dataApertura" class="col-2 col-form-label">Data Apertura<span>*</span>:</label>
+                        <div class="col-3">
+                            <div class="input-group" *ngIf="(checkeddataApertura.value && !readonlyForm); else inputDataApertura">
+                                <input id="dataApertura" class="form-control" [class.is-invalid]="dataApertura.invalid && (form.submitted || (dataApertura.dirty || dataApertura.touched))" placeholder="yyyy-mm-dd" formControlName="dataApertura"  bdiDatepicker #datepickerDA="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" [maxDate]="maxDate"/>
+                                <div class="input-group-append" (click)="datepickerDA.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div  *ngIf="!!dataApertura.value"  class="input-group-append" (click)="reset('dataApertura')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+                                <div *ngIf="dataApertura.errors?.required && form.submitted" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="dataApertura.errors?.maxdate  && (dataApertura.dirty || dataApertura.touched)" class="invalid-feedback">
+                                    Data superiore al limite massimo consentito (data chiusura): {{formatterUtils.dateToString(maxDate)}}
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #inputDataApertura>
+                            <input class="form-control" [value]="getDataAperturaValue()" [readOnly]="true"/>
+                        </ng-template>
+                        <div class="col-1">
+                            <label for="checkeddataApertura" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkeddataApertura" type="checkbox" formControlName="checkeddataApertura" (click)="manageCheckBox('dataApertura', 'date')">
+                            </label>
+                        </div>
+
+                        <label for="dataChiusura" class="col-2 col-form-label">Data Chiusura:</label>
+                        <div class="col-3">
+                            <div class="input-group" *ngIf="(checkeddataChiusura.value && !readonlyForm); else inputDataChiusura">
+                                <input id="dataChiusura" class="form-control" [class.is-invalid]="dataChiusura.invalid && form.submitted" placeholder="yyyy-mm-dd" formControlName="dataChiusura"  bdiDatepicker #datepickerDC="bdiDatepicker" maxlength="10" readOnly="true" style="background-color: #ffffff !important"/>
+                                <div class="input-group-append" (click)="datepickerDC.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div  *ngIf="!!dataChiusura.value"  class="input-group-append" (click)="reset('dataChiusura')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #inputDataChiusura>
+                            <input class="form-control" [value]="getDataChiusuraValue()" [readOnly]="true"/>
+                        </ng-template>
+                        <div class="col-1">
+                            <label for="checkeddataChiusura" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkeddataChiusura" type="checkbox" formControlName="checkeddataChiusura" [attr.disabled]="true">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-6"></div>
+                        <label for="dataInizioValidita" class="col-2 col-form-label">Data Inizio Validità:</label>
+                        <div class="col-3">
+                            <div class="input-group" *ngIf="!readonlyForm; else dataInizioValiditaT">
+                                <input id="dataInizioValidita" class="form-control" [class.is-invalid]="dataInizioValidita.invalid && (form.submitted || (dataInizioValidita.dirty || dataInizioValidita.touched))" placeholder="yyyy-mm-dd" formControlName="dataInizioValidita"  bdiDatepicker #datepickerDIV="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" [minDate]="minDate" [maxDate]="maxDate"/>
+                                <div class="input-group-append" (click)="datepickerDIV.toggle()" style="cursor: pointer;">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="!!dataInizioValidita.value"  class="input-group-append" (click)="reset('dataInizioValidita')" style="cursor: pointer;">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="dataInizioValidita.errors?.mindate  && (dataInizioValidita.dirty || dataInizioValidita.touched)" class="invalid-feedback">
+                                    Data inferiore al limite inferiore consentito (data apertura): {{formatterUtils.dateToString(minDate)}}
+                                </div>
+                                <div *ngIf="dataInizioValidita.errors?.maxdate  && (dataInizioValidita.dirty || dataInizioValidita.touched)" class="invalid-feedback">
+                                    Data superiore al limite massimo consentito (data chiusura): {{formatterUtils.dateToString(maxDate)}}
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #dataInizioValiditaT>
+                            <input class="form-control" [value]="getDataInizioValiditaValue()" [readOnly]="true"/>
+                        </ng-template>
+                    </div>
+
+                    <div class="alert alert-info" role="alert" >
+                        <div [innerHTML]=utils.getModificaMessage()></div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                        </div>
+                        <div class="col-6"></div>
+
+                        <div class="col-3">
+                            <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Salva</button>
+                        </div>
+
+                    </div>
+                </form>
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+<ng-template #mfiModal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mfiModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h4 class="modal-title">Attenzione!</h4>
+        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>Il codice MFI inserito non è stato riscontrato su Infostat.<br/>
+            Procedere comunque con la modifica?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Annulla</button>
+        <button type="button" class="btn btn-primary" (click)="confirmModal()">OK</button>
+    </div>
+</ng-template>

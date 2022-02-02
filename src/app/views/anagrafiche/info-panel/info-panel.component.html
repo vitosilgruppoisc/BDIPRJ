@@ -1,0 +1,25 @@
+
+<ng-container *ngFor="let row of model.data">
+    <div class="row">
+        <ng-container *ngFor="let c of row">
+            <div class="col-{{12/model.columnNumber}}">
+                <ng-container *ngIf="!!c.button; else data">
+                    <div class="row">
+                        <div class="col-2">
+                            <button class=" btn btn-block btn-primary" type="button" [disabled]="!c.button.enabled" bdiTooltip="{{c.button.tooltip}}" placement="right"(click)="navigate(c.button.routerLink, c.button.params, c.button.sessionKey)">
+                                <i class="{{c.button.icon}}"></i>
+                            </button>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-template #data>
+                    <div class="row">
+                        <label class="col-6 col-form-label" *ngIf="!!c && !!c.label"><b>{{c.label}}: </b></label>
+                        <div class="col-6 col-form-label"><span bdiTooltip="{{c.tooltip?.value}}" placement="{{c.tooltip?.placement}}" [style.color]="c.style?.color" [style.font-weight]="c.style?.fontweight">{{c.value}}</span></div>
+                    </div>
+                </ng-template>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>
+

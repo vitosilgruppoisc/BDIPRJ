@@ -1,0 +1,42 @@
+<p>tab-container works!</p>
+
+<bdi-alert type="danger" >
+    <strong><div [innerHTML]="errorMessage"></div></strong>
+</bdi-alert>
+<bdi-alert type="danger" >
+    <h5>Segnalazioni</h5>
+    <hr>
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-danger" ><strong></strong> - </li>
+    </ul> 
+</bdi-alert>
+<bdi-tab-view (onTabChange)="tabChange($event)">
+    <bdi-tab id="dettaglio">
+        <div *bdi-tab-title>Dettaglio movimento</div>
+      
+    </bdi-tab>
+    <bdi-tab id="ordinante">
+        <div *bdi-tab-title>Ordinante</div>
+        
+    </bdi-tab>
+    <bdi-tab id="intermediariOrdinante" >
+        <div *bdi-tab-title>Intermediari dell'ordinante</div>
+       
+    </bdi-tab>
+    <bdi-tab id="intermediariBeneficiante" >
+        <div *bdi-tab-title>Intermediari del beneficiario</div>
+       
+    </bdi-tab>
+    <bdi-tab id="beneficiario">
+        <div *bdi-tab-title>Beneficiario</div>
+        
+    </bdi-tab>
+    <bdi-tab id="note">
+        <div *bdi-tab-title>Note e informazioni</div>
+        
+    </bdi-tab>
+    <bdi-tab id="riepilogo">
+        <div *bdi-tab-title>Riepilogo</div>
+       
+    </bdi-tab>
+</bdi-tab-view>

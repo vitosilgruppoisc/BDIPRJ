@@ -1,0 +1,174 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-edit"></i> Modifica Eccezione Transcodifica Dettaglio </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <form [formGroup]="modificaForm" (ngSubmit)="modifyEccTranscodingRetail()" class="form-horizontal" #form="ngForm">
+
+                    <div class="form-group row">
+                        <label for="nsc" class="col-2 col-form-label">Nsc<span>*</span>:</label>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input id="nsc" class="form-control" [class.is-invalid]="nsc.invalid && (form.submitted || (nsc.dirty || nsc.touched))" formControlName="nsc" maxlength="10" [readOnly]="!checkednsc.value || readonlyForm "/>
+                                <div *ngIf="nsc.errors?.required && (form.submitted || (nsc.dirty || nsc.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="nsc.errors?.pattern && (form.submitted || (nsc.dirty || nsc.touched))" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkednsc" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkednsc" type="checkbox" formControlName="checkednsc" (click)="manageCheckBox('nsc')" [attr.disabled]="true"/>
+                            </label>
+                        </div>
+
+                        <label for="countryCode" class="col-2 col-form-label">Country Code<span>*</span>:</label>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input id="countryCode" class="form-control" [value]="getCountryCodeValue()" [readOnly]="true"/>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkedcountryCode" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedcountryCode" type="checkbox" formControlName="checkedcountryCode" (click)="manageCheckBox('countryCode')" [attr.disabled]="true"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="bic" class="col-2 col-form-label">Bic<span>*</span>:</label>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input id="bic" class="form-control" [class.is-invalid]="bic.invalid && (form.submitted || (bic.dirty || bic.touched))" formControlName="bic" [readOnly]="!checkedbic.value || readonlyForm" toUppercase/>
+                                <div *ngIf="bic.errors?.required && (form.submitted || (bic.dirty || bic.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="bic.errors?.syntax && (form.submitted || (bic.dirty || bic.touched))" class="invalid-feedback">
+                                    Campo sintatticamente non valido
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkedbic" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedbic" type="checkbox" formControlName="checkedbic" (click)="manageCheckBox('bic')"/>
+                            </label>
+                        </div>
+
+                        <label for="descrizione" class="col-2 col-form-label">Descrizione:</label>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input id="descrizione" class="form-control" [class.is-invalid]="descrizione.invalid && (descrizione.dirty || descrizione.touched)" formControlName="descrizione" maxlength="4000" [readOnly]="!checkeddescrizione.value || readonlyForm"/>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <label for="checkeddescrizione" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkeddescrizione" type="checkbox" formControlName="checkeddescrizione" (click)="manageCheckBox('descrizione')"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="validFrom" class="col-2 col-form-label">Data Inizio Validità<span>*</span>:</label>
+                        <div class="col-3">
+                            <div class="input-group" *ngIf="(checkedvalidFrom.value && !readonlyForm); else inputvalidFrom">
+                                <input id="validFrom" class="form-control" [class.is-invalid]="validFrom.invalid && (form.submitted || (validFrom.dirty || validFrom.touched))" placeholder="yyyy-mm-dd" formControlName="validFrom"  bdiDatepicker #datepickerDA="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                <div *ngIf="!readonlyForm" class="input-group-append" (click)="datepickerDA.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div  *ngIf="!!validFrom.value && !readonlyForm"  class="input-group-append" (click)="reset('validFrom')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+
+                                <div *ngIf="validFrom.errors?.required && (form.submitted || (validFrom.dirty || validFrom.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="validFrom.errors?.dateformat && (form.submitted || (validFrom.dirty || validFrom.touched))" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                                <div *ngIf="validFrom.errors?.daterange  && (validFrom.dirty || validFrom.touched)" class="invalid-feedback">
+                                    Intervallo non valido
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #inputvalidFrom>
+                            <input class="form-control" [value]="getvalidFromValue()" [readOnly]="true"/>
+                        </ng-template>
+                        <div class="col-1">
+                            <label for="checkedvalidFrom" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedvalidFrom" type="checkbox" formControlName="checkedvalidFrom" (click)="manageCheckBox('validFrom', 'date')"/>
+                            </label>
+                        </div>
+
+                        <label for="validTo" class="col-2 col-form-label">Data Fine Validità<span>*</span>:</label>
+                        <div class="col-3">
+                            <div class="input-group" *ngIf="(checkedvalidTo.value && !readonlyForm); else inputvalidTo">
+                                <input id="validTo" class="form-control" [class.is-invalid]="validTo.invalid && (form.submitted || (validTo.dirty || validTo.touched))" placeholder="yyyy-mm-dd" formControlName="validTo"  bdiDatepicker #datepickerDC="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" />
+                                <div *ngIf="!readonlyForm" class="input-group-append" (click)="datepickerDC.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div  *ngIf="!!validTo.value && !readonlyForm"  class="input-group-append" (click)="reset('validTo')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+
+                                <div *ngIf="validTo.errors?.required && (form.submitted || (validTo.dirty || validTo.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="validTo.errors?.dateformat && (form.submitted || (validTo.dirty || validTo.touched))" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                                <div *ngIf="validTo.errors?.daterange  && (validTo.dirty || validTo.touched)" class="invalid-feedback">
+                                    Intervallo non valido
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #inputvalidTo>
+                            <input class="form-control" [value]="getvalidToValue()" [readOnly]="true"/>
+                        </ng-template>
+                        <div class="col-1">
+                            <label for="checkedvalidTo" class="col-form-label">
+                                <input *ngIf="!readonlyForm" id="checkedvalidTo" type="checkbox" formControlName="checkedvalidTo"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                        </div>
+                        <div class="col-6"></div>
+
+                        <div class="col-3">
+                            <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Salva</button>
+                        </div>
+
+                    </div>
+                </form>
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>

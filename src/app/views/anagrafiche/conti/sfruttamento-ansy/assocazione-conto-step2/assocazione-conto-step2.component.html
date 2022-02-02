@@ -1,0 +1,144 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-link"></i> Associa Conto - Sfruttamento </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelPartyModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Party ANSY</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelPartyModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelContoModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Conto {{isDCAorCB ? 'DCA' : 'Sub Account'}}</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelContoModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelContoModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Dati Associazione</strong>
+                    </div>
+                    <div class="card-body">
+
+                        <form [formGroup]="sfruttamentoForm" (ngSubmit)="openModal()" class="form-horizontal" #form="ngForm">
+                            <div class="form-group row">
+                                <label for="dataInizioSfruttamentoDa" class="col-2 col-form-label">Data Inizio Sfruttamento<span>*</span>:</label>
+                                <div class="col-4">
+                                    <div class="input-group" *ngIf="!readonlyForm; else dataInizioSfruttamentoDaT">
+                                        <input id="dataInizioSfruttamentoDa" class="form-control" [class.is-invalid]="dataInizioSfruttamentoDa.invalid && ( form.submitted || (dataInizioSfruttamentoDa.dirty || dataInizioSfruttamentoDa.touched))" placeholder="yyyy-mm-dd" formControlName="dataInizioSfruttamentoDa"  bdiDatepicker #datepickerDSda="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" [minDate]="minDate"/>
+                                        <div  class="input-group-append" (click)="datepickerDSda.toggle()" style="cursor: pointer;">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                        </div>
+                                        <div  *ngIf="!!dataInizioSfruttamentoDa.value"  class="input-group-append" (click)="reset('dataInizioSfruttamentoDa')" style="cursor: pointer;">
+                                                        <span class="input-group-text">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </span>
+                                        </div>
+                                        <ng-container *ngIf="!isDCAorCB && !!minDate">
+                                            <ng-container *ngTemplateOutlet="dataSfruttamentoTooltip"></ng-container>
+                                        </ng-container>
+                                        <div *ngIf="dataInizioSfruttamentoDa.errors?.required && form.submitted" class="invalid-feedback">
+                                            Campo obbligatorio
+                                        </div>
+                                        <div *ngIf="dataInizioSfruttamentoDa.errors?.dateformat && (dataInizioSfruttamentoDa.dirty || dataInizioSfruttamentoDa.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataInizioSfruttamentoDa.errors?.mindate  && (dataInizioSfruttamentoDa.dirty || dataInizioSfruttamentoDa.touched)" class="invalid-feedback">
+                                            Data inferiore al limite inferiore consentito (data inizio sfruttamento): {{formatterUtils.dateToString(minDate)}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #dataInizioSfruttamentoDaT>
+                                    <input class="form-control" [value]="getDataSfruttamentoValue()" [readOnly]="true"/>
+                                </ng-template>
+
+                                <ng-container *ngIf="!isDCAorCB">
+                                    <label for="tipoSfruttamento" class="col-2 col-form-label">Tipo Sfruttamento<span>*</span>:</label>
+                                    <div class="col-4">
+                                        <ng-container *ngIf="!readonlyForm; else tipoSfruttamentoT">
+                                            <select id="tipoSfruttamento" class="form-control" [class.is-invalid]="tipoSfruttamento.invalid && form.submitted" formControlName="tipoSfruttamento">
+                                                <option [ngValue]="undefined">Tutti</option>
+                                                <option *ngFor="let t of tipiSfruttamento" [value]="t.codice">{{t.descrizione}}</option>
+                                            </select>
+                                            <div *ngIf="tipoSfruttamento.errors?.value && form.submitted" class="invalid-feedback">
+                                                Campo obbligatorio
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                    <ng-template #tipoSfruttamentoT>
+                                        <input class="form-control" [value]="getTipoSfruttamentoValue()" [readOnly]="true"/>
+                                    </ng-template>
+                                </ng-container>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-4 mx-auto">
+                                    <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Associa</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <button routerLink="{{backUrl}}" [queryParams]="{back:true}"  class="btn btn-block btn-primary" type="button">Indietro</button>
+                    </div>
+                </div>
+
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #dataSfruttamentoTooltip>
+    <div class="input-group-append" bdiTooltip="{{getDataSfruttamentoTooltip()}}" placement="right" >
+        <span class="input-group-text" >
+            <i class="fas fa-info-circle"></i>
+        </span>
+    </div>
+</ng-template>
+
+
+<ng-template #confirmModal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mfiModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h4 class="modal-title">Conferma</h4>
+        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        Si sta confermando l'associazione. Procedere?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Annulla</button>
+        <button type="button" class="btn btn-primary" (click)="confirm()">Conferma</button>
+    </div>
+</ng-template>

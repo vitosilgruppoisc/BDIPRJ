@@ -1,0 +1,145 @@
+{
+  "userprofile": {
+    "username": "Mock User",
+    "roles": ["SPI", "BIL", "VISUALIZZATORE"]
+  },
+  "applicationconfig": {
+    "activeProfile": "default",
+    "gepaCoreEndpoint": "http://localhost:3001",
+    "gepaAnagraficheEndpoint": "http://localhost:3000",
+    "stompBrokerEndpoint": "<nd>",
+    "dataOperativa": "05 Febbraio 2021"
+  },
+  "tipiParty": [
+    {
+      "codice": "1",
+      "descrizione": "Tipo1"
+    },
+    {
+      "codice": "2",
+      "descrizione": "Tipo2"
+    }
+  ],
+  "parties": [
+  {
+    "id": 0,
+    "bic": "BIC0",
+    "tipoParty": "TIPO",
+    "defAbi": 1,
+    "nome": "nome",
+    "filialeRif": 1,
+    "mfiCode": "code",
+    "catEconimica": 1,
+    "indicatoreRes": 1,
+    "dataApertura": "2014-05-23T09:51:49 -02:00",
+    "dataChiusura": "2019-04-10T05:49:47 -02:00",
+    "validFrom": "2018-03-18T10:17:22 -01:00",
+    "validTo": "9999-12-31T06:52:41 -02:00",
+    "tsModifica": "2014-04-16T02:43:47 -02:00",
+    "utenteRichiesta": "TEST",
+    "utenteValidazione": "TEST"
+  },
+  {
+    "id": 1,
+    "bic": "BIC1",
+    "tipoParty": "TIPO",
+    "defAbi": 1,
+    "nome": "nome",
+    "filialeRif": 1,
+    "mfiCode": "code",
+    "catEconimica": 1,
+    "indicatoreRes": 1,
+    "dataApertura": "2014-05-08T03:26:30 -02:00",
+    "dataChiusura": "2019-06-06T09:08:59 -02:00",
+    "validFrom": "2018-08-30T05:20:24 -02:00",
+    "validTo": "2015-07-24T09:47:34 -02:00",
+    "tsModifica": "2014-07-10T07:56:42 -02:00",
+    "utenteRichiesta": "TEST",
+    "utenteValidazione": "TEST"
+  },
+  {
+    "id": 2,
+    "bic": "BIC2",
+    "tipoParty": "TIPO",
+    "defAbi": 1,
+    "nome": "nome",
+    "filialeRif": 1,
+    "mfiCode": "code",
+    "catEconimica": 1,
+    "indicatoreRes": 1,
+    "dataApertura": "2019-12-23T01:11:16 -01:00",
+    "dataChiusura": "2016-04-22T04:39:05 -02:00",
+    "validFrom": "2018-03-23T09:03:29 -01:00",
+    "validTo": "2020-07-05T03:20:08 -02:00",
+    "tsModifica": "2016-02-28T06:05:03 -01:00",
+    "utenteRichiesta": "TEST",
+    "utenteValidazione": "TEST"
+  },
+  {
+    "id": 3,
+    "bic": "BIC3",
+    "tipoParty": "TIPO",
+    "defAbi": 1,
+    "nome": "nome",
+    "filialeRif": 1,
+    "mfiCode": "code",
+    "catEconimica": 1,
+    "indicatoreRes": 1,
+    "dataApertura": "2014-06-12T03:47:53 -02:00",
+    "dataChiusura": "2015-08-22T11:59:47 -02:00",
+    "validFrom": "2018-05-05T11:59:51 -02:00",
+    "validTo": "2016-02-08T10:09:09 -01:00",
+    "tsModifica": "2021-03-22T07:07:07 -01:00",
+    "utenteRichiesta": "TEST",
+    "utenteValidazione": "TEST"
+  },
+  {
+    "id": 4,
+    "bic": "BIC4",
+    "tipoParty": "TIPO",
+    "defAbi": 1,
+    "nome": "nome",
+    "filialeRif": 1,
+    "mfiCode": "code",
+    "catEconimica": 1,
+    "indicatoreRes": 1,
+    "dataApertura": "2020-08-25T03:02:18 -02:00",
+    "dataChiusura": "2016-12-17T11:37:54 -01:00",
+    "validFrom": "2017-05-31T09:24:37 -02:00",
+    "validTo": "2020-10-25T06:27:55 -01:00",
+    "tsModifica": "2014-12-09T02:05:50 -01:00",
+    "utenteRichiesta": "TEST",
+    "utenteValidazione": "TEST"
+  },
+  {
+    "id": 5,
+    "bic": "BIC5",
+    "tipoParty": "TIPO",
+    "defAbi": 1,
+    "nome": "nome",
+    "filialeRif": 1,
+    "mfiCode": "code",
+    "catEconimica": 1,
+    "indicatoreRes": 1,
+    "dataApertura": "2016-10-06T09:52:18 -02:00",
+    "dataChiusura": "2016-06-03T03:27:44 -02:00",
+    "validFrom": "2018-01-14T06:51:48 -01:00",
+    "validTo": "2015-12-16T09:42:55 -01:00",
+    "tsModifica": "2015-01-25T11:39:08 -01:00",
+    "utenteRichiesta": "TEST",
+    "utenteValidazione": "TEST"
+  }
+],
+  "filialiRiferimento": [
+    {
+      "codice": "1",
+      "sigla": "S1",
+      "descrizione": "Filiale1"
+    },
+    {
+      "codice": "2",
+      "sigla": "S2",
+      "descrizione": "Filiale2"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-info-circle"></i> Dettaglio Task Eccezione Transcodifica Dettaglio </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <div *ngIf="!!infoPanelModel">
+                    <app-info-panel [model]="infoPanelModel"></app-info-panel>
+                </div>
+
+                <br/>
+                <div class="row">
+                    <div class="col-3">
+                        <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                    </div>
+                    <div class="col-3"></div>
+                    <div class="col-3 float-right ml-auto" *ngIf="showButtonConferma">
+                        <button class="btn btn-block btn-primary" type="button" (click)="conferma()" [disabled]="readonlyForm">Conferma</button>
+                    </div>
+                    <div class="col-3 float-right ml-auto" *ngIf="showButtonRifiuta">
+                        <button class="btn btn-block btn-primary" type="button" (click)="openModal()" [disabled]="readonlyForm">Rifiuta</button>
+                    </div>
+                </div>
+
+                <br/>
+                <div>
+                    <span><b>{{NOT_DEFINED}}</b> indica campo non valorizzato </span>
+                </div>
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+<ng-template #noteModal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mfiModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h4 class="modal-title">Conferma Rifiuto</h4>
+        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <textarea id="note" rows="3" maxlength="4000" class="form-control" [(ngModel)]="note"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Annulla</button>
+        <button type="button" class="btn btn-primary" (click)="rifiuta()">Rifiuta</button>
+    </div>
+</ng-template>
+

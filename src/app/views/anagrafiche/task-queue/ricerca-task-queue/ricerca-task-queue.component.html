@@ -1,0 +1,223 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-wrench"></i> Task Queue </strong>
+        </div>
+
+        <div class="card-body">
+
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <form [formGroup]="ricercaForm" class="form-horizontal">
+
+                    <div class="form-group row">
+                        <label for="tipoAnagrafica" class="col-2 col-form-label">Tipo Anagrafica:</label>
+                        <div class="col-4">
+                            <select id="tipoAnagrafica" class="form-control" [class.is-invalid]="tipoAnagrafica.invalid && (tipoAnagrafica.dirty || tipoAnagrafica.touched)" formControlName="tipoAnagrafica">
+                                <option [ngValue]="undefined">Tutti</option>
+                                <option *ngFor="let t of tipiAnagrafica" [value]="t.codice">{{t.descrizione}}</option>
+                            </select>
+                        </div>
+
+                        <label for="operazione" class="col-2 col-form-label">Operazione:</label>
+                        <div class="col-4">
+                            <select id="operazione" class="form-control" [class.is-invalid]="operazione.invalid && (operazione.dirty || operazione.touched)" formControlName="operazione">
+                                <option [ngValue]="undefined">Tutti</option>
+                                <option *ngFor="let t of tipiOperazione" [value]="t.codice">{{t.descrizione}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="recordId" class="col-2 col-form-label">Record Id:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="recordId" class="form-control" [class.is-invalid]="recordId.invalid && (recordId.dirty || recordId.touched)" formControlName="recordId"/>
+                                <div *ngIf="recordId.errors?.pattern && (recordId.dirty || recordId.touched)" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="stato" class="col-2 col-form-label">Stato:</label>
+                        <div class="col-4">
+                            <select id="stato" class="form-control" [class.is-invalid]="stato.invalid && (stato.dirty || stato.touched)" formControlName="stato">
+                                <option [ngValue]="null">Tutti</option>
+                                <option *ngFor="let t of stati" [value]="t.codice">{{t.descrizione}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <!--Data Richiesta-->
+                        <div class="col-6">
+                            <div class="row"><label class="col-12 col-form-label">Data Richiesta:</label></div>
+                            <div class="row">
+                                <label for="dataRichiestaDa" class="col-4 col-form-label text-right">Da:</label>
+                                <div class="col-8">
+                                    <div class="input-group">
+                                        <input id="dataRichiestaDa" class="form-control" [class.is-invalid]="dataRichiestaDa.invalid && (dataRichiestaDa.dirty || dataRichiestaDa.touched)" placeholder="yyyy-mm-dd" formControlName="dataRichiestaDa"  bdiDatepicker #datepickerDAda="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                        <div class="input-group-append" (click)="datepickerDAda.toggle()" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                        <div  *ngIf="!!dataRichiestaDa.value"  class="input-group-append" (click)="reset('dataRichiestaDa')" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </div>
+
+                                        <div *ngIf="dataRichiestaDa.errors?.dateformat && (dataRichiestaDa.dirty || dataRichiestaDa.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataRichiestaDa.errors?.daterange && (dataRichiestaDa.dirty || dataRichiestaDa.touched)" class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <label for="dataRichiestaA" class="col-4 col-form-label text-right">A:</label>
+                                <div class="col-8">
+                                    <div class="input-group">
+                                        <input id="dataRichiestaA" class="form-control" [class.is-invalid]="dataRichiestaA.invalid && (dataRichiestaA.dirty || dataRichiestaA.touched)" placeholder="yyyy-mm-dd" formControlName="dataRichiestaA"  bdiDatepicker #datepickerDAa="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                        <div class="input-group-append" (click)="datepickerDAa.toggle()" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                        <div  *ngIf="!!dataRichiestaA.value"  class="input-group-append" (click)="reset('dataRichiestaA')" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </div>
+
+                                        <div *ngIf="dataRichiestaA.errors?.dateformat && (dataRichiestaA.dirty || dataRichiestaA.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataRichiestaA.errors?.daterange && (dataRichiestaA.dirty || dataRichiestaA.touched)" class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Data Validazione-->
+                        <div class="col-6">
+                            <div class="row"><label class="col-12 col-form-label">Data Validazione:</label></div>
+                            <div class="row">
+                                <label for="dataValidazioneDa" class="col-4 col-form-label text-right">Da:</label>
+                                <div class="col-8">
+                                    <div class="input-group">
+                                        <input id="dataValidazioneDa" class="form-control" [class.is-invalid]="dataValidazioneDa.invalid && (dataValidazioneDa.dirty || dataValidazioneDa.touched)" placeholder="yyyy-mm-dd" formControlName="dataValidazioneDa"  bdiDatepicker #datepickerDCda="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                        <div class="input-group-append" (click)="datepickerDCda.toggle()" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                        <div  *ngIf="!!dataValidazioneDa.value"  class="input-group-append" (click)="reset('dataValidazioneDa')" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </div>
+
+                                        <div *ngIf="dataValidazioneDa.errors?.dateformat && (dataValidazioneDa.dirty || dataValidazioneDa.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataValidazioneDa.errors?.daterange && (dataValidazioneDa.dirty || dataValidazioneDa.touched)" class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <label for="dataValidazioneA" class="col-4 col-form-label text-right">A:</label>
+                                <div class="col-8">
+                                    <div class="input-group">
+                                        <input id="dataValidazioneA" class="form-control" [class.is-invalid]="dataValidazioneA.invalid && (dataValidazioneA.dirty || dataValidazioneA.touched)" placeholder="yyyy-mm-dd" formControlName="dataValidazioneA"  bdiDatepicker #datepickerDCa="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                        <div class="input-group-append" (click)="datepickerDCa.toggle()" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                        <div  *ngIf="!!dataValidazioneA.value"  class="input-group-append" (click)="reset('dataValidazioneA')" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </div>
+
+                                        <div *ngIf="dataValidazioneA.errors?.dateformat && (dataValidazioneA.dirty || dataValidazioneA.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataValidazioneA.errors?.daterange && (dataValidazioneA.dirty || dataValidazioneA.touched)" class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="utenteRichiesta" class="col-2 col-form-label">Utente Richiesta:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="utenteRichiesta" class="form-control" [class.is-invalid]="utenteRichiesta.invalid && (utenteRichiesta.dirty || utenteRichiesta.touched)" formControlName="utenteRichiesta" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                <ng-container *ngTemplateOutlet="wildcardTooltip"></ng-container>
+                                <div *ngIf="utenteRichiesta.errors?.wildcard && (utenteRichiesta.dirty || utenteRichiesta.touched)" class="invalid-feedback">
+                                    Campo non valido per la ricerca con wildcard
+                                </div>
+                                <div *ngIf="utenteRichiesta.errors?.pattern && (utenteRichiesta.dirty || utenteRichiesta.touched)" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="utenteValidazione" class="col-2 col-form-label">Utente Validatore:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="utenteValidazione" class="form-control" [class.is-invalid]="utenteValidazione.invalid && (utenteValidazione.dirty || utenteValidazione.touched)" formControlName="utenteValidazione" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                <ng-container *ngTemplateOutlet="wildcardTooltip"></ng-container>
+                                <div *ngIf="utenteValidazione.errors?.wildcard && (utenteValidazione.dirty || utenteValidazione.touched)" class="invalid-feedback">
+                                    Campo non valido per la ricerca con wildcard
+                                </div>
+                                <div *ngIf="utenteValidazione.errors?.pattern && (utenteValidazione.dirty || utenteValidazione.touched)" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-2">
+                        <div class="col-2 mx-auto">
+                            <button class="btn btn-block btn-primary" type="button" (click)="submit(target, true)">Cerca</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div #target>
+                    <app-generic-table *ngIf="showTable" [model]="taskModel" (action)="onActionEvent($event)"(colToDisplay)="onColToDisplayEvent($event, this.taskService.searchModel)" (paginationChanged)="onPaginationEvent($event, this.taskService.searchModel)" (sortChanged)="onSortEvent($event, this.taskService.searchModel)" (filterChanged)="onFilterEvent($event, this.taskService.searchModel)"></app-generic-table>
+                </div>
+            </ng-container>
+        </div>
+
+        <ng-template #waiting>
+            <gepa-spinning-loader></gepa-spinning-loader>
+        </ng-template>
+    </div>
+
+    <ng-template #wildcardTooltip>
+        <div class="input-group-append" bdiTooltip="{{util.getWildcardTooltip()}}" placement="right" >
+            <span class="input-group-text" >
+                <i class="fas fa-info-circle"></i>
+            </span>
+        </div>
+    </ng-template>

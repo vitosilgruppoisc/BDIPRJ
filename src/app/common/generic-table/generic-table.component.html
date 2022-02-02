@@ -1,0 +1,62 @@
+<div class="row" >
+    <div class="col-12 text-left">
+
+        <div class="alert alert-danger" role="alert" *ngIf="model.errorCustomMessage">
+            {{model.errorCustomMessage}}
+        </div>
+        <div class="alert alert-warning" role="alert" *ngIf="model.enableMessageEmptyResult">
+            La ricerca non ha restituito risultati.
+        </div>
+        <div class="alert alert-warning" role="alert" *ngIf="model.enableMessageOnSizeResultLimit">
+            La ricerca ha restituito {{model.rowData.length}} di {{model.searchRecordLenght}} risultati. Affinare la ricerca.
+        </div>
+    </div>
+</div>
+
+<div class="row" *ngIf="!model.enableMessageEmptyResult && !model.errorCustomMessage">
+    <div class="col-6 text-left" *ngIf="!!model.enableColumnSelection">
+        <div>
+            <button class="btn" (click)="showDropDown=!showDropDown">
+                <i class="fa fa-list"></i>
+            </button>
+            <div class="drop-show column-selection" *ngIf="showDropDown">
+                    <label *ngFor="let a of columnToDisplay">
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="checkbox" [(ngModel)]="a.checked"
+                                       (change)="manageCheck(a.name, a.checked, a.colId)" />
+                                <span>{{a.name}}</span>
+                            </div>
+                        </div>
+                    </label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-6 text-right">
+        <button *ngIf="!!model.enablePdfExport" class="btn btn-info btn-sm" (click)="exportPdf()">
+            <i class="far fa-file-pdf"></i> Esporta in pdf
+        </button>
+        <button *ngIf="!!model.enableCsvExport" class="btn btn-info btn-sm" (click)="exportCsv()">
+            <i class="fas fa-file-csv"></i> Esporta in csv
+        </button>
+    </div>
+</div>
+
+<div class="row" *ngIf="!model.enableMessageEmptyResult && !model.errorCustomMessage">
+    <div class="col">
+        <bdi-grid
+                [domLayout]="model.domLayout"
+                [rowData]="model.rowData"
+                [columnDefs]="columnDefs"
+                [pagination]="model.pagination"
+                [gridOptions]="model.gridOptions"
+                [columnsFitAvailable]="model.columnsFitAvailable"
+                [suppressDragLeaveHidesColumns]="true"
+                [suppressCellSelection]="false"
+                [localeText]="localeText"
+        >
+        </bdi-grid>
+    </div>
+</div>

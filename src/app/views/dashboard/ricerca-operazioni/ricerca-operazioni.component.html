@@ -1,0 +1,217 @@
+<ng-container *ngIf="!(isLoading); else waiting">
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-plus-square"></i> Ricerca Operazioni </strong>
+        </div>
+
+        <div class="card-body">
+
+            
+                <form class="form-horizontal" #form="ngForm" [formGroup]= "formValidate">
+                            <div class="form-group row">
+                                <label for="utenteInserimento" class="col-2 col-form-label"  >Data esecuzione da(*):</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input type="date-input" type="date" placeholder="Data Scadenza" formControlName="dataEsecuzioneDa"
+                                          class="form-control">                                        
+                                        <div class="input-group-append"  style="cursor: pointer;">     
+                                        </div>
+                                        <div  class="input-group-append"  style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </div>
+
+                                        <div  class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                    </div> 
+                            </div>
+                            <br/>
+                                <label for="utenteInserimento" class="col-2 col-form-label">Data esecuzione a(*):</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input type="date-input" type="date" placeholder="Data Scadenza" 
+                                        formControlName="dataEsecuzioneA" class="form-control">                                        
+                                        <div class="input-group-append"  style="cursor: pointer;">     
+                                        </div>
+                                        <div  class="input-group-append"  style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </div>
+
+                                        <div  class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                    </div> 
+                            </div>
+                            </div>
+                        <div class="form-group row">
+                            <label class="col-2 col-form-label">Tipo flusso(*):</label>
+                            <div class="col-4">
+                                <select class="form-control" formControlName="tipoFlusso" (change)="loadStatus()">
+                                    <option *ngFor ="let flow of flowTypeData"
+                                    [ngValue]="flow">{{flow.descrTipoFlusso}}</option>
+                                </select>
+                            </div>
+
+                            <label class="col-2 col-form-label">Tipo operazione(*)</label>
+                            <div class="col-4">
+                                <select class="form-control" formControlName="tipoOperazione" (change)="loadStatus()">
+                                    <option *ngFor ="let operation of operationData"
+                                    [ngValue]="operation">{{operation.descrTipoOperazione}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-2 col-form-label">Valuta:</label>
+                            <div class="col-4">
+                                <select class="form-control" formControlName="valuta">
+                                    <option [ngValue]=null>Non Selezionato</option>
+                                    <option *ngFor ="let currency of currencyData"
+                                    [ngValue]="currency">{{currency.descrValuta}}</option>
+                                </select>
+                            </div>
+    
+                            <label class="col-2 col-form-label">Stato:</label>
+                            <div class="col-4">
+                                <select class="form-control" formControlName="stato" >
+                                    <option [ngValue]=null>Non Selezionato</option>
+                                    <option *ngFor ="let stato of statusData"
+                                    [ngValue]="stato">{{stato.descrStato}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-2 col-form-label">Procedura Utente:</label>
+                            <div class="col-4">
+                                <select class="form-control" formControlName="proceduraUtente">
+                                    <option [ngValue]=null>Non Selezionato</option>
+                                    <option *ngFor ="let procedura of procedureData" 
+                                    [ngValue]="procedura">{{procedura.nomeLogico}}</option>
+                                </select>
+                            </div>
+                                    <label class="col-2 col-form-label">Id GEPA:</label>
+                                <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control"  maxlength="160" formControlName="idGepa" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-2 col-form-label">id TRN:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="TRN" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+    
+                            <label for="utenteApprovatore" class="col-2 col-form-label">UETR:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="UETR" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="utenteInserimento" class="col-2 col-form-label">End-to-End Id:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="endToEndId" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+    
+                            <label for="utenteApprovatore" class="col-2 col-form-label">BIC Beneficiario:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="BICBeneficiario" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-2 col-form-label">BIC Ordinante:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="BICOrdinante" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+    
+                            <label class="col-2 col-form-label">IBAN Beneficiario:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="IBANBeneficiario" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-2 col-form-label">IBAN Ordinante:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="IBANOrdinante" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+    
+                            <label class="col-2 col-form-label">Circuito Regolamento:</label>
+                            <div class="col-4">
+                                <select class="form-control" formControlName="circuitoRegolamento">
+                                    <option [ngValue]=null>Non Selezionato</option>
+                                    <option *ngFor ="let circuit of circuitData"
+                                    [ngValue]=circuit.idCircuitoRegolamento>{{circuit.descrCircuitoRegolamento}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-2 col-form-label">Importo da:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="importoDa" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+    
+                            <label class="col-2 col-form-label">Importo a:</label>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input class="form-control" formControlName="importoA" maxlength="4000" [pattern]="'^[a-zA-Z0-9%]+$'"/>
+                                </div>
+                            </div>
+                        </div>
+                </form>
+
+                <div #target>
+                </div>
+            <br/>
+            <div class="row mb-2">
+                <div class="col-3">
+                </div>
+                <div class="col-3 offset-md-6">
+                </div>
+            </div>
+        </div>
+
+            <button [style.width.%]='30' class="btn btn-primary button" (click)="doSearch()" [disabled]="isLoading && !formValidate.valid">Ricerca</button>
+
+            <app-generic-table *ngIf="showTable" [model]="tableData" [style.padding.bottom.px]='20'></app-generic-table>
+              
+    </div>
+
+    <ng-template #wildcardTooltip>
+        <div class="input-group-append" placement="right" >
+        <span class="input-group-text" >
+            <i class="fas fa-info-circle"></i>
+        </span>
+        </div>
+    </ng-template>
+</div>
+
+</ng-container>
+<ng-template #waiting>
+    <gepa-spinning-loader></gepa-spinning-loader>
+</ng-template>

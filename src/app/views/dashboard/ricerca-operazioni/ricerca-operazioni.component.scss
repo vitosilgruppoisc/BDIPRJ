@@ -1,0 +1,52 @@
+
+.flex-container{
+
+    display: flex;
+    justify-content: space-around;
+  
+  }
+
+  .chart{
+    flex-basis: 1600px;
+  }
+
+  .container{
+    justify-content: left;
+  }
+
+  .vertical-align{
+    padding-top:25px
+  }
+  .margin-bottom{
+    margin-bottom: 5px;
+  
+  }
+   .margin-top{
+    margin-top: 5px;
+   }
+   .modal-xl{
+     max-width: 1140px;
+   }
+  
+  .container{
+    margin: auto;
+    margin-top: 3%;
+  
+    
+  
+  }
+
+  .button{
+    align-items: flex-end;
+    display:inline-block;
+    margin-bottom: 1%;
+  }
+
+  .btn{
+    width: 70px;
+    margin-right: 1px;
+  }
+  .div{
+    margin-left: 10px;
+  }
+  

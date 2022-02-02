@@ -1,0 +1,123 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-times-circle"></i> Chiusura Eccezione Transcodifica Ingrosso </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-warning" role="alert" *ngIf="!isActive">
+                    L'eccezione non risulta attiva e non può essere modificata.
+                </div>
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <form [formGroup]="eliminazioneForm" (ngSubmit)="onSubmit()" class="form-horizontal" #form="ngForm">
+                    <div class="form-group row">
+                        <label for="abi" class="col-2 col-form-label">Abi:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="abi" class="form-control" [readOnly]="true" [value]="eccTransIngr.abi"/>
+                            </div>
+                        </div>
+
+                        <label for="cab" class="col-2 col-form-label">Cab:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="cab" class="form-control" [readOnly]="true" [value]="eccTransIngr.cab"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="tipoConto" class="col-2 col-form-label">Tipo Conto:</label>
+                        <div class="col-4">
+                            <input id="tipoConto" class="form-control" [readOnly]="true" [value]="eccTransIngr.tipoConto"/>
+                        </div>
+
+                        <label for="bicConto" class="col-2 col-form-label">Bic Conto<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="bicConto" class="form-control" [readOnly]="true" [value]="eccTransIngr.bicConto"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="verso" class="col-2 col-form-label">Verso:</label>
+                        <div class="col-4">
+                            <input id="verso" class="form-control" [readOnly]="true" [value]="eccTransIngr.verso"/>
+                        </div>
+
+                        <label for="descrizione" class="col-2 col-form-label">Descrizione:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="descrizione" class="form-control" [readOnly]="true" [value]="eccTransIngr.descrizione"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="dataInizioValidita" class="col-2 col-form-label">Data Inizio Validità: </label>
+                        <div class="col-4">
+                            <input id="dataInizioValidita" class="form-control" [readOnly]="true" [value]="eccTransIngr.validFrom"/>
+                        </div>
+
+                        <label for="dataFineValidita" class="col-2 col-form-label">Data Fine Validità<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group" *ngIf="!readonlyForm; else dataFineValiditaTempl">
+                                <input id="dataFineValidita" class="form-control" [class.is-invalid]="dataFineValidita.invalid  && (form.submitted || (dataFineValidita.dirty || dataFineValidita.touched))"placeholder="yyyy-mm-dd" formControlName="dataFineValidita"  bdiDatepicker #datepickerDIV="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                <div class="input-group-append" (click)="datepickerDIV.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div *ngIf="!!dataFineValidita.value"  class="input-group-append" (click)="reset('dataFineValidita')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+                                <div *ngIf="dataFineValidita.errors?.required && form.submitted" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="dataFineValidita.errors?.dateformat  && (dataFineValidita.dirty || dataFineValidita.touched)" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                                <!--<div *ngIf="dataFineValidita.errors?.mindate  && (dataFineValidita.dirty || dataFineValidita.touched)" class="invalid-feedback">
+                                    Data inferiore al limite inferiore consentito (data inizio validità): {{formatterUtils.dateToString(minDate)}}
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                        <ng-template #dataFineValiditaTempl>
+                            <input class="form-control" [value]="getDataFineValiditaValue()" [readOnly]="true"/>
+                        </ng-template>
+
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                        </div>
+                        <div class="col-6"></div>
+
+                        <div class="col-3">
+                            <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Salva</button>
+                        </div>
+                    </div>
+                </form>
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,8 @@
+<span>
+    <button class="btn btn-sm btn-link p-1" *ngIf="!!this.resultRenderModel.okResult"   [disabled]="!this.resultRenderModel.okResult.enabled" >
+        <i class="fas fa-check-circle" style="color:green"></i>
+    </button>
+    <button class="btn btn-sm btn-link p-1" *ngIf="!!this.resultRenderModel.koResult"   [disabled]="!this.resultRenderModel.koResult.enabled" [title]="this.resultRenderModel.koResult.message">
+       <i class="fas fa-times-circle" style="color:red"></i>
+    </button>
+</span>

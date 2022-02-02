@@ -1,0 +1,70 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-plus-square"></i> Nuovo Conto - Scelta Tipo Conto </strong>
+        </div>
+
+        <div class="card-body">
+
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelPartyModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Party Proprietario</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelPartyModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Tipo Conto</strong>
+                    </div>
+                    <div class="card-body">
+
+                        <form [formGroup]="tipoContoform" (ngSubmit)="onSubmit()" class="form-horizontal" #form="ngForm">
+                            <div class="form-group row">
+                                <label for="tipoConto" class="col-2 col-form-label">Tipo Conto:</label>
+                                <div class="col-10">
+                                    <select id="tipoConto" class="form-control" [class.is-invalid]="tipoConto.invalid && form.submitted" formControlName="tipoConto">
+                                        <option [ngValue]="undefined">Tutti</option>
+                                        <option *ngFor="let t of tipiConto" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="tipoConto.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+
+                                <!--<div class="col-3 offset-md-3">
+                                    <button class="btn btn-block btn-primary" type="submit">Avanti</button>
+                                </div>
+                                -->
+                            </div>
+
+                            <br/>
+                            <div class="row mb-2">
+                                <div class="col-3">
+                                    <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                                </div>
+                                <div class="col-3 offset-md-6">
+                                    <button class="btn btn-block btn-primary" type="submit">Avanti</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+
+            </ng-container>
+
+        </div>
+
+        <ng-template #waiting>
+            <gepa-spinning-loader></gepa-spinning-loader>
+        </ng-template>
+    </div>
+</div>

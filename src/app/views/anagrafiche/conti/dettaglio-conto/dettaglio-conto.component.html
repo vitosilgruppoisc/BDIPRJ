@@ -1,0 +1,64 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-info-circle"></i> Dettaglio Conto </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelPartyModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Party Proprietario</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelPartyModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelContoModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Conto</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelContoModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="sfruttamentiSistemaAncillareModel.length > 0">
+                    <ng-container *ngFor="let infoPanelSistemaAncillareModel of sfruttamentiSistemaAncillareModel">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong><i class="fal fa-info-square"></i>{{infoPanelSistemaAncillareModel.title}}</strong>
+                            </div>
+                            <div class="card-body">
+                                <app-info-panel [model]="infoPanelSistemaAncillareModel"></app-info-panel>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                    </div>
+                </div>
+
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+

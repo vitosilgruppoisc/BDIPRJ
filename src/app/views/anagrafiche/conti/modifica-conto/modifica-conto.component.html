@@ -1,0 +1,375 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-edit"></i> Modifica Conto <ng-container *ngIf="userIsBil"> - Indicatori BIL</ng-container></strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelPartyModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Party Proprietario</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelPartyModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <form [formGroup]="modificaForm" (ngSubmit)="onSubmit()" class="form-horizontal" #form="ngForm">
+
+                    <div class="card">
+                        <div class="card-header">
+                            <strong><i class="fal fa-info-square"></i>Conto</strong>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="form-group row">
+                                <label for="bicConto" class="col-2 col-form-label">Bic<span>*</span>:</label>
+                                <div class="col-3">
+                                    <input id="bicConto" class="form-control" [class.is-invalid]="bicConto.invalid && form.submitted" formControlName="bicConto" maxlength="11" [readOnly]="!checkedbicConto.value || readonlyForm"/>
+                                </div>
+                                <ng-container *ngIf="userIsSpi">
+                                    <label for="checkedbicConto" class="col-1 col-form-label"><input *ngIf="!readonlyForm" id="checkedbicConto" type="checkbox" formControlName="checkedbicConto"  [attr.disabled]="true"></label>
+                                </ng-container>
+                                <ng-container *ngIf="!userIsSpi">
+                                    <div class="col-1"></div>
+                                </ng-container>
+
+                                <label for="tipoConto" class="col-2 col-form-label">Tipo Conto<span>*</span>:</label>
+                                <div class="col-3">
+                                    <select *ngIf="(checkedtipoConto.value && !readonlyForm); else inputTipo" id="tipoConto" class="form-control" [class.is-invalid]="tipoConto.invalid && form.submitted" formControlName="tipoConto" (change)="setTargetService()">
+                                        <option [ngValue]="undefined">Seleziona</option>
+                                        <option *ngFor="let t of tipiConto" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="tipoConto.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                                <ng-template #inputTipo>
+                                    <input class="form-control" [value]="getSelectValue(tipiConto, conto.tipoConto.codice)" [readOnly]="true"/>
+                                </ng-template>
+                                <ng-container *ngIf="userIsSpi">
+                                    <label for="checkedtipoConto" class="col-1 col-form-label"><input *ngIf="!readonlyForm" id="checkedtipoConto" type="checkbox" formControlName="checkedtipoConto" [attr.disabled]="true"/></label>
+                                </ng-container>
+                                <ng-container *ngIf="!userIsSpi">
+                                    <div class="col-1"></div>
+                                </ng-container>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="targetService" class="col-2 col-form-label">Target Service<span>*</span>:</label>
+                                <!--<div class="col-3">
+                                    <select *ngIf="(checkedtargetService.value && !readonlyForm); else inputTarget" id="targetService" class="form-control" [class.is-invalid]="targetService.invalid && form.submitted" formControlName="targetService">
+                                        <option [ngValue]="undefined">Seleziona</option>
+                                        <option *ngFor="let t of tipiTargetService" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="targetService.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                                <ng-template #inputTarget>
+                                    <input class="form-control" [value]="getSelectValue(tipiTargetService, conto.targetService)" [readOnly]="true"/>
+                                </ng-template>
+                                -->
+                                <div class="col-3">
+                                    <input id="targetService" class="form-control" [value]="getSelectValue(tipiTargetService, conto.targetService)" [readOnly]="true"/>
+                                </div>
+                                <ng-container *ngIf="userIsSpi">
+                                    <label for="checkedtargetService" class="col-1 col-form-label"><input *ngIf="!readonlyForm" id="checkedtargetService" type="checkbox" formControlName="checkedtargetService" [attr.disabled]="true"/></label>
+                                </ng-container>
+                                <ng-container *ngIf="!userIsSpi">
+                                    <div class="col-1"></div>
+                                </ng-container>
+
+                                <label for="numeroConto" class="col-2 col-form-label">Account Id<span>*</span>:</label>
+                                <div class="col-3">
+                                    <input id="numeroConto" class="form-control" [class.is-invalid]="numeroConto.invalid && form.submitted" formControlName="numeroConto" maxlength="34" [pattern]="'^[a-zA-Z0-9]+$'" [readOnly]="!checkednumeroConto.value || readonlyForm"/>
+                                    <div *ngIf="numeroConto.errors?.pattern && form.submitted" class="invalid-feedback">
+                                        Campo non valido
+                                    </div>
+                                    <div *ngIf="numeroConto.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <ng-container *ngIf="userIsSpi">
+                                        <label for="checkednumeroConto" class="col-form-label"><input *ngIf="!readonlyForm" id="checkednumeroConto" type="checkbox" formControlName="checkednumeroConto" (click)="manageCheckBox('numeroConto')"/></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="!userIsSpi">
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="descrizione" class="col-2 col-form-label">Descrizione<span>*</span>:</label>
+                                <div class="col-3">
+                                    <input id="descrizione" class="form-control" [class.is-invalid]="descrizione.invalid && form.submitted" formControlName="descrizione" maxlength="4000" [readOnly]="!checkeddescrizione.value || readonlyForm"/>
+                                    <div *ngIf="descrizione.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <ng-container *ngIf="userIsSpi">
+                                        <label for="checkeddescrizione" class="col-form-label"><input *ngIf="!readonlyForm" id="checkeddescrizione" type="checkbox" formControlName="checkeddescrizione" (click)="manageCheckBox('descrizione')"/></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="!userIsSpi">
+                                    </ng-container>
+                                </div>
+
+                                <label for="abi" class="col-2 col-form-label">ABI<span>*</span>:</label>
+                                <div class="col-3">
+                                    <input id="abi" class="form-control" [class.is-invalid]="abi.invalid && form.submitted" formControlName="abi" maxlength="5" [pattern]="'^[0-9]+$'" [readOnly]="!checkedabi.value || readonlyForm"/>
+                                    <div *ngIf="abi.errors?.pattern && form.submitted" class="invalid-feedback">
+                                        Campo non valido
+                                    </div>
+                                    <div *ngIf="abi.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <ng-container *ngIf="userIsSpi">
+                                        <label for="checkedabi" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedabi" type="checkbox" formControlName="checkedabi" (click)="manageCheckBox('abi')"></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="!userIsSpi">
+                                    </ng-container>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="mcaDefFlag" class="col-2 col-form-label">Default MCA:</label>
+                                <div class="col-3">
+                                    <select *ngIf="(checkedmcaDefFlag.value && !readonlyForm); else inputDefaultMCA" id="mcaDefFlag" class="form-control" [class.is-invalid]="mcaDefFlag.invalid && form.submitted" formControlName="mcaDefFlag">
+                                        <option [ngValue]="undefined">Seleziona</option>
+                                        <option *ngFor="let t of tipiDefaultMCA" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="mcaDefFlag.errors?.value && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+
+                                <ng-template #inputDefaultMCA>
+                                    <input class="form-control" [value]="getSelectValue(tipiDefaultMCA, formatterUtils.getBooleanAsString(conto, 'mcaDefFlag'))" [readOnly]="true"/>
+                                </ng-template>
+
+                                <div class="col-1">
+                                    <ng-container *ngIf="userIsSpi">
+                                        <label *ngIf="checkTipoConto(); else defaultMCADisabled" for="checkedmcaDefFlag" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedmcaDefFlag" type="checkbox" formControlName="checkedmcaDefFlag" (click)="manageCheckBox('mcaDefFlag')"/></label>
+                                    </ng-container>
+                                    <ng-template #defaultMCADisabled>
+                                        <label for="checkeddefaultMCADis" class="col-form-label"><input *ngIf="!readonlyForm" id="checkeddefaultMCADis" type="checkbox" formControlName="checkedmcaDefFlag" [attr.disabled]="true"/></label>
+                                    </ng-template>
+
+                                    <ng-container *ngIf="!userIsSpi">
+                                    </ng-container>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="pressoBdi" class="col-2 col-form-label">Presso BDI <span>*</span>:</label>
+                                <div class="col-3">
+                                    <select *ngIf="(checkedpressoBdi.value && !readonlyForm); else inputPressoBDI" id="pressoBdi" class="form-control" [class.is-invalid]="pressoBdi.invalid && form.submitted" formControlName="pressoBdi">
+                                        <option [ngValue]="undefined">Seleziona</option>
+                                        <option *ngFor="let t of tipiPressoBDI" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="pressoBdi.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                                <ng-template #inputPressoBDI>
+                                    <input class="form-control" [value]="getSelectValue(tipiPressoBDI, formatterUtils.getBooleanAsString(conto, 'pressoBdi'))" [readOnly]="true"/>
+                                </ng-template>
+                                <div class="col-1">
+                                    <ng-container *ngIf="userIsSpi">
+                                        <label for="checkedpressoBdi" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedpressoBdi" type="checkbox" formControlName="checkedpressoBdi" (click)="manageCheckBox('pressoBdi')"/></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="!userIsSpi">
+                                    </ng-container>
+                                </div>
+
+                                <label for="flgMan" class="col-2 col-form-label">Flag Inserimento manuale<span>*</span>:</label>
+                                <div class="col-3">
+                                    <select *ngIf="(checkedflgMan.value && !readonlyForm); else inputFlagMan" id="flgMan" class="form-control" [class.is-invalid]="flgMan.invalid && form.submitted" formControlName="flgMan" (change)="checkenableModificatoriBIL()">
+                                        <option [ngValue]="undefined">Seleziona</option>
+                                        <option *ngFor="let t of tipiManuale" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="flgMan.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                                <ng-template #inputFlagMan>
+                                    <input class="form-control" [value]="getSelectValueFlgMan(tipiManuale, formatterUtils.getBooleanAsString(conto, 'flgMan'))" [readOnly]="true"/>
+                                </ng-template>
+                                <div class="col-1">
+                                    <ng-container *ngIf="!this.userIsBil ">
+                                        <label for="checkedflgMan" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedflgMan" type="checkbox" formControlName="checkedflgMan" [attr.disabled]="true"></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="!!this.userIsBil ">
+                                        <label for="checkedflgMan" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedflgMan" type="checkbox" formControlName="checkedflgMan" (click)="manageFlagInserimentoForBil('flgMan')"/></label>
+                                    </ng-container>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="indResidenza" class="col-2 col-form-label">Indicatore di Residenza:</label>
+                                <div class="col-3">
+                                    <input id="indResidenza" class="form-control" [class.is-invalid]="indicatoreResidenza.invalid && form.submitted" formControlName="indicatoreResidenza" [readOnly]="!checkedindicatoreResidenza.value || !!readonlyForm" maxlength="5" [pattern]="'^[0-9]+$'"/>
+                                    <div *ngIf="indicatoreResidenza.errors?.pattern && form.submitted" class="invalid-feedback">
+                                        Campo non valido
+                                    </div>
+                                    <div *ngIf="indicatoreResidenza.errors?.value && form.submitted" class="invalid-feedback">
+                                        Campo obblogatorio
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <ng-container *ngIf="!enableModificatoriBIL">
+                                        <label for="checkedindResidenza" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedindResidenza" type="checkbox" formControlName="checkedindicatoreResidenza" [attr.disabled]="true"></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="enableModificatoriBIL">
+                                        <label for="checkedindResidenzaBil" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedindResidenzaBil" type="checkbox" formControlName="checkedindicatoreResidenza" (click)="manageCheckBox('indicatoreResidenza')"/></label>
+                                    </ng-container>
+                                </div>
+
+                                <label for="categoriaEconomica" class="col-2 col-form-label">Categoria Economica:</label>
+                                <div class="col-3">
+                                    <input id="categoriaEconomica" class="form-control" [class.is-invalid]="categoriaEconomica.invalid && form.submitted" formControlName="categoriaEconomica" [readOnly]="!checkedcategoriaEconomica.value || !!readonlyForm" maxlength="5" [pattern]="'^[0-9]+$'"/>
+                                    <div *ngIf="categoriaEconomica.errors?.pattern && form.submitted" class="invalid-feedback">
+                                        Campo non valido
+                                    </div>
+                                    <div *ngIf="categoriaEconomica.errors?.value && form.submitted" class="invalid-feedback">
+                                        Campo obblogatorio
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <ng-container *ngIf="!enableModificatoriBIL">
+                                        <label for="checkedcatEconomica" class="col-form-label"><input *ngIf="!readonlyForm" id="checkedcatEconomica" type="checkbox" formControlName="checkedcategoriaEconomica" [attr.disabled]="true"></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="enableModificatoriBIL">
+                                        <label for="checkedcatEconomicaBil" class="col-form-label">
+                                            <input *ngIf="!readonlyForm" id="checkedcatEconomicaBil" type="checkbox" formControlName="checkedcategoriaEconomica" (click)="manageCheckBox('categoriaEconomica')"/>
+                                        </label>
+                                    </ng-container>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="dataApertura" class="col-2 col-form-label">Data Apertura<span>*</span>:</label>
+                                <div class="col-3">
+                                    <div class="input-group" *ngIf="(checkeddataApertura.value && !readonlyForm); else inputDataApertura">
+                                        <input id="dataApertura" class="form-control" [class.is-invalid]="dataApertura.invalid && form.submitted" placeholder="yyyy-mm-dd" formControlName="dataApertura"  bdiDatepicker #datepickerDA="bdiDatepicker" maxlength="10" readOnly="true" style="background-color: #ffffff !important" [minDate]="minDateDA"/>
+                                        <div class="input-group-append" (click)="datepickerDA.toggle()" style="cursor: pointer;">
+                                                                                                <span class="input-group-text">
+                                                                                                    <i class="fa fa-calendar"></i>
+                                                                                                </span>
+                                        </div>
+                                        <div  *ngIf="!!dataApertura.value"  class="input-group-append" (click)="reset('dataApertura')" style="cursor: pointer;">
+                                                                                                <span class="input-group-text">
+                                                                                                    <i class="fas fa-trash-alt"></i>
+                                                                                                </span>
+                                        </div>
+                                        <div *ngIf="dataApertura.errors?.required && form.submitted" class="invalid-feedback">
+                                            Campo obbligatorio
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #inputDataApertura>
+                                    <input class="form-control" [value]="getDataAperturaValue()" [readOnly]="true"/>
+                                </ng-template>
+                                <div class="col-1">
+                                    <ng-container *ngIf="userIsSpi">
+                                        <label for="checkeddataApertura" class="col-form-label"><input *ngIf="!readonlyForm" id="checkeddataApertura" type="checkbox" formControlName="checkeddataApertura" (click)="manageCheckBox('dataApertura', 'date')"></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="!userIsSpi">
+                                    </ng-container>
+                                </div>
+
+                                <label for="dataChiusura" class="col-2 col-form-label">Data Chiusura:</label>
+                                <div class="col-3">
+                                    <div class="input-group" *ngIf="(checkeddataChiusura.value && !readonlyForm); else inputDataChiusura">
+                                        <input id="dataChiusura" class="form-control" [class.is-invalid]="dataChiusura.invalid && form.submitted" placeholder="yyyy-mm-dd" formControlName="dataChiusura"  bdiDatepicker #datepickerDC="bdiDatepicker" maxlength="10" readOnly="true" style="background-color: #ffffff !important"/>
+                                        <div class="input-group-append" (click)="datepickerDC.toggle()" style="cursor: pointer;">
+                                                                                                <span class="input-group-text">
+                                                                                                    <i class="fa fa-calendar"></i>
+                                                                                                </span>
+                                        </div>
+                                        <div  *ngIf="!!dataChiusura.value"  class="input-group-append" (click)="reset('dataChiusura')" style="cursor: pointer;">
+                                                                                                <span class="input-group-text">
+                                                                                                    <i class="fas fa-trash-alt"></i>
+                                                                                                </span>
+                                        </div>
+                                        <div *ngIf="dataChiusura.errors?.value && form.submitted" class="invalid-feedback">
+                                            La data chiusura deve essere maggiore o uguale della data Apertura
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #inputDataChiusura>
+                                    <input class="form-control" [value]="getDataChiusuraValue()" [readOnly]="true"/>
+                                </ng-template>
+                                <div class="col-1">
+                                    <ng-container *ngIf="userIsSpi">
+                                        <label for="checkeddataChiusura" class="col-form-label"><input *ngIf="!readonlyForm" id="checkeddataChiusura" type="checkbox" formControlName="checkeddataChiusura" [attr.disabled]="true"></label>
+                                    </ng-container>
+                                    <ng-container *ngIf="!userIsSpi">
+                                    </ng-container>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-6"></div>
+                                <label for="dataInizioValidita" class="col-2 col-form-label">Data Inizio Validità:</label>
+                                <div class="col-3">
+                                    <div class="input-group" *ngIf="!readonlyForm; else dataInizioValiditaT">
+                                        <input id="dataInizioValidita" class="form-control" placeholder="yyyy-mm-dd" formControlName="dataInizioValidita"  bdiDatepicker #datepickerDIV="bdiDatepicker" maxlength="10" readOnly="true" style="background-color: #ffffff !important" [minDate]="minDateVF"/>
+                                        <div class="input-group-append" (click)="datepickerDIV.toggle()" style="cursor: pointer;">
+                                                                                            <span class="input-group-text">
+                                                                                                <i class="fa fa-calendar"></i>
+                                                                                            </span>
+                                        </div>
+                                        <div *ngIf="!!dataInizioValidita.value"  class="input-group-append" (click)="reset('dataInizioValidita')" style="cursor: pointer;">
+                                                                                            <span class="input-group-text">
+                                                                                                <i class="fas fa-trash-alt"></i>
+                                                                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #dataInizioValiditaT>
+                                    <input class="form-control" [value]="getDataInizioValiditaValue()" [readOnly]="true"/>
+                                </ng-template>
+                            </div>
+
+                            <div class="alert alert-info" role="alert" >
+                                <div [innerHTML]=utils.getModificaMessage()></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-3">
+                            <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                        </div>
+                        <div class="col-6"></div>
+                        <div class="col-3">
+                            <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Salva</button>
+                        </div>
+                    </div>
+
+
+                </form>
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+

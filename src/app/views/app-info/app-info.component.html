@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h2><strong>Informazioni sul Sistema</strong></h2>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
+<div class="modal-body">
+    <h3 class="text-primary"><strong>GEPA Conti Loro</strong></h3>
+
+    <dl class="row">
+        <dt class="col-sm-5">System Owner</dt>
+        <dd class="col-sm-7">Servizio Sistema dei pagamenti<br/>Divisione Servizi di pagamento e corrispondenza</dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-5">Autore del Sistema</dt>
+        <dd class="col-sm-7">Servizio Sviluppo informatico<br/>Divisione Applicazioni istituzionali</dd>
+    </dl>
+    <br/>
+
+    <h3 class="text-primary"><strong>Componenti del Sistema</strong></h3>
+
+    <dl class="row text-info component-info">
+        <dt class="col-sm-3">nome</dt>
+        <dt class="col-sm-3">versione</dt>
+        <dt class="col-sm-6">build</dt>
+    </dl>
+    <dl class="row component-info">
+        <dt class="col-sm-3">{{frontend.name}}</dt>
+        <dd class="col-sm-3">{{frontend.version}}</dd>
+        <dd class="col-sm-3">{{frontend.build.timestamp}}</dd>
+        <dd class="col-sm-3">{{frontend.build.type}}</dd>
+    </dl>
+</div>

@@ -1,0 +1,126 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-link"></i> Eliminazione Sfruttamento </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelPartyModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Party ANSY</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelPartyModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelContoModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Conto {{isDCAorCB ? 'DCA' : 'Sub Account'}}</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelContoModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelContoModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Dati Associazione</strong>
+                    </div>
+                    <div class="card-body">
+
+                        <form [formGroup]="sfruttamentoForm" (ngSubmit)="openModal()" class="form-horizontal" #form="ngForm">
+                            <div class="form-group row">
+                                <label for="dataFineSfruttamentoDa" class="col-2 col-form-label">Data Fine Sfruttamento<span>*</span>:</label>
+                                <div class="col-4">
+                                    <div class="input-group" *ngIf="!readonlyForm; else dataFineSfruttamentoDaT">
+                                        <input id="dataFineSfruttamentoDa" class="form-control" [class.is-invalid]="dataFineSfruttamentoDa.invalid && (form.submitted || (dataFineSfruttamentoDa.dirty || dataFineSfruttamentoDa.touched))" placeholder="yyyy-mm-dd" formControlName="dataFineSfruttamentoDa"  bdiDatepicker #datepickerDSda="bdiDatepicker" style="background-color: #ffffff !important" [minDate]="minDate"/>
+                                        <div  class="input-group-append" (click)="datepickerDSda.toggle()" style="cursor: pointer;">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                        </div>
+                                        <div  *ngIf="!!dataFineSfruttamentoDa.value"  class="input-group-append" (click)="reset('dataFineSfruttamentoDa')" style="cursor: pointer;">
+                                                        <span class="input-group-text">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </span>
+                                        </div>
+                                        <ng-container *ngIf="!isDCAorCB">
+                                            <ng-container *ngTemplateOutlet="dataSfruttamentoTooltip"></ng-container>
+                                        </ng-container>
+                                        <div *ngIf="dataFineSfruttamentoDa.errors?.required && form.submitted" class="invalid-feedback">
+                                            Campo obbligatorio
+                                        </div>
+                                        <div *ngIf="dataFineSfruttamentoDa.errors?.dateformat && (dataFineSfruttamentoDa.dirty || dataFineSfruttamentoDa.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataFineSfruttamentoDa.errors?.mindate  && (dataFineSfruttamentoDa.dirty || dataFineSfruttamentoDa.touched)" class="invalid-feedback">
+                                            Data inferiore al limite inferiore consentito (data inizio sfruttamento): {{formatterUtils.dateToString(minDate)}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #dataFineSfruttamentoDaT>
+                                    <input class="form-control" [value]="getDataFineSfruttamentoValue()" [readOnly]="true"/>
+                                </ng-template>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-4 mx-auto">
+                                    <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Rimuovi Sfruttamento</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <button routerLink="{{backUrl}}" class="btn btn-block btn-primary" type="button">Indietro</button>
+                    </div>
+                </div>
+
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
+
+
+<ng-template #dataSfruttamentoTooltip>
+    <div class="input-group-append" bdiTooltip="{{getDataSfruttamentoTooltip()}}" placement="right" >
+        <span class="input-group-text" >
+            <i class="fas fa-info-circle"></i>
+        </span>
+    </div>
+</ng-template>
+
+
+<ng-template #confirmModal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mfiModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h4 class="modal-title">Conferma</h4>
+        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        Si sta confermando la rimozione dello sfruttamento. Procedere?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Annulla</button>
+        <button type="button" class="btn btn-primary" (click)="confirm()">Conferma</button>
+    </div>
+</ng-template>

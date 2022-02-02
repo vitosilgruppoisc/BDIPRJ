@@ -1,0 +1,133 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-info-circle"></i> Raggiungibilità </strong>
+        </div>
+
+        <div class="card-body">
+
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <form [formGroup]="ricercaForm" class="form-horizontal" (ngSubmit)="submit()" #form="ngForm">
+
+                    <div class="form-group row">
+                        <label for="tipologia" class="col-2 col-form-label">Tipologia<span>*</span>:</label>
+                        <div class="col-4">
+                            <select id="tipologia" class="form-control" [class.is-invalid]="tipologia.invalid && (form.submitted || (tipologia.dirty || tipologia.touched))" formControlName="tipologia">
+                                <option [ngValue]="null">Seleziona</option>
+                                <option *ngFor="let t of tipologiaList" [value]="t.codice">{{t.descrizione}}</option>
+                            </select>
+                            <div *ngIf="tipologia.errors?.required && (form.submitted || (tipologia.dirty || tipologia.touched))" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+
+                        <label for="data" class="col-2 col-form-label">Data<span>*</span>:</label>
+                        <div class="col-4">
+                            <div class="input-group" >
+                                <input id="data" class="form-control" [class.is-invalid]="data.invalid && (form.submitted || (data.dirty || data.touched))" placeholder="yyyy-mm-dd" formControlName="data"  bdiDatepicker #datepickerDA="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important"/>
+                                <div class="input-group-append" (click)="datepickerDA.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                </div>
+                                <div  *ngIf="!!data.value"  class="input-group-append" (click)="reset('data')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                </div>
+
+                                <div *ngIf="data.errors?.required && (form.submitted || (data.dirty || data.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                                <div *ngIf="data.errors?.dateformat && (form.submitted || (data.dirty || data.touched))" class="invalid-feedback">
+                                    Campo non valido
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="nsc" class="col-2 col-form-label">Nsc:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="nsc" class="form-control" [class.is-invalid]="nsc.invalid && (form.submitted || (nsc.dirty || nsc.touched))" formControlName="nsc" maxlength="10" [readOnly]="!!nscCCReadonly">
+                                <div *ngIf="nsc.errors?.required && (form.submitted || (nsc.dirty || nsc.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="countryCode" class="col-2 col-form-label">Country Code:</label>
+                        <div class="col-4">
+                            <select *ngIf="!nscCCReadonly; else countryCodeTemp" id="countryCode" class="form-control" [class.is-invalid]="countryCode.invalid && (form.submitted || (countryCode.dirty || countryCode.touched))" formControlName="countryCode">
+                                <option [ngValue]="null">Seleziona</option>
+                                <option *ngFor="let c of countryCodeList" [value]="c.codice">{{c.descrizione}}</option>
+                            </select>
+                            <div *ngIf="countryCode.errors?.required && (form.submitted || (countryCode.dirty || countryCode.touched))" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+                        <ng-template #countryCodeTemp>
+                            <input class="form-control" [readOnly]="true"/>
+                        </ng-template>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="iban" class="col-2 col-form-label">Iban:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="iban" class="form-control" [class.is-invalid]="iban.invalid && (form.submitted || (iban.dirty || iban.touched))" formControlName="iban" maxlength="35" [readOnly]="!!ibanReadonly">
+                                <div *ngIf="iban.errors?.required && (form.submitted || (iban.dirty || iban.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="bic" class="col-2 col-form-label">Bic:</label>
+                        <div class="col-4">
+                            <div class="input-group">
+                                <input id="bic" class="form-control" [class.is-invalid]="bic.invalid && (form.submitted || (bic.dirty || bic.touched))" formControlName="bic" maxlength="11" [readOnly]="!!bicReadonly">
+                                <div *ngIf="bic.errors?.required && (form.submitted || (bic.dirty || bic.touched))" class="invalid-feedback">
+                                    Campo obbligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="circuito" class="col-2 col-form-label">Circuito:</label>
+                        <div class="col-4">
+                            <select id="circuito" class="form-control" [class.is-invalid]="circuito.invalid && (form.submitted || (circuito.dirty || circuito.touched))" formControlName="circuito">
+                                <option [ngValue]="null">Tutti</option>
+                                <option *ngFor="let c of circuitiList" [value]="c.codice">{{c.descrizione}}</option>
+                            </select>
+                            <div *ngIf="circuito.errors?.required && (form.submitted || (circuito.dirty || circuito.touched))" class="invalid-feedback">
+                                Campo obbligatorio
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-2 mx-auto">
+                            <button class="btn btn-block btn-primary" type="submit">Calcola Raggiungibilità</button>
+                        </div>
+                    </div>
+                </form>
+
+                <br/>
+                <div>
+                    <app-generic-table *ngIf="showTable" [model]="reachabilityModel"></app-generic-table>
+                    <br/>
+                    <span *ngIf="!reachabilityModel.errorCustomMessage"><b>{{NOT_DEFINED}}</b> indica campo non valorizzato </span>
+                </div>
+            </ng-container>
+        </div>
+
+        <ng-template #waiting>
+            <gepa-spinning-loader></gepa-spinning-loader>
+        </ng-template>
+    </div>

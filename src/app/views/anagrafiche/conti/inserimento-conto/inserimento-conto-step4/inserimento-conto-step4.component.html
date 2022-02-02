@@ -1,0 +1,274 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-plus-square"></i> Nuovo Conto - Inserimento Conto </strong>
+        </div>
+
+        <div class="card-body">
+
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelPartyModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Party Proprietario</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelPartyModel"></app-info-panel>
+                        <br/>
+                        <span><b>{{NOT_DEFINED}}</b> indica campo non valorizzato </span>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="!!infoPanelContoModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Conto DCA Padre</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelContoModel"></app-info-panel>
+                        <br/>
+                        <span><b>{{NOT_DEFINED}}</b> indica campo non valorizzato </span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Conto</strong>
+                    </div>
+                    <div class="card-body">
+
+                        <form [formGroup]="inserimentoForm" class="form-horizontal" (ngSubmit)="openModal()" #form="ngForm">
+                            <div class="form-group row">
+                                <label for="bicConto" class="col-2 col-form-label">Bic Conto:</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input id="bicConto" class="form-control" [class.is-invalid]="bicConto.invalid && form.submitted" formControlName="bicConto" [pattern]="'^[a-zA-Z0-9]+$'" [readOnly]="checkContoIsSubAccountByTipoCod(inserimentoContoModel.tipoConto) || readonlyForm"/>
+                                        <div *ngIf="bicConto.errors?.bicReq && form.submitted" class="invalid-feedback">
+                                            Campo obbligatorio
+                                        </div>
+                                        <div *ngIf="bicConto.errors?.syntax && form.submitted" class="invalid-feedback">
+                                            Campo sintatticamente non valido
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <label for="tipoConto" class="col-2 col-form-label">Tipo Conto<span>*</span>:</label>
+                                <div class="col-4">
+                                    <input id="tipoConto" class="form-control" [value]="getTipoValue()" [readOnly]="true"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="descrizione" class="col-2 col-form-label">Descrizione<span>*</span>:</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input id="descrizione" class="form-control" [class.is-invalid]="descrizione.invalid && form.submitted" formControlName="descrizione" maxlength="4000" [readOnly]="readonlyForm"/>
+                                        <div *ngIf="descrizione.errors?.required  && form.submitted" class="invalid-feedback">
+                                            Campo obbligatorio
+                                        </div>
+                                        <div *ngIf="descrizione.errors?.pattern  && form.submitted" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <label for="idConto" class="col-2 col-form-label">Account Id<span>*</span>:</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input id="idConto" class="form-control" [class.is-invalid]="idConto.invalid && form.submitted" formControlName="idConto" maxlength="34" [pattern]="'^[a-zA-Z0-9]+$'" [readOnly]="readonlyForm"/>
+                                        <div *ngIf="idConto.errors?.required  && form.submitted" class="invalid-feedback">
+                                            Campo obbligatorio
+                                        </div>
+                                        <div *ngIf="idConto.errors?.pattern  && form.submitted" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="targetService" class="col-2 col-form-label">Target Service<span>*</span>:</label>
+                                <!--<div class="col-4">
+                                    <select *ngIf="!readonlyForm; else inputTarget" id="targetService" class="form-control" [class.is-invalid]="targetService.invalid && form.submitted" formControlName="targetService">
+                                        <option [ngValue]="undefined">Tutti</option>
+                                        <option *ngFor="let t of tipiTargetService" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="targetService.errors?.required && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+
+                                <ng-template #inputTarget>
+                                    <input class="form-control" [value]="getTargetServiceValue()" [readOnly]="true"/>
+                                </ng-template>
+                                -->
+                                <div class="col-4">
+                                    <input id="targetService" class="form-control" [value]="getTargetServiceValue()" [readOnly]="true"/>
+                                </div>
+
+                                <label for="abi" class="col-2 col-form-label">Abi<span>*</span>:</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input id="abi" class="form-control" [class.is-invalid]="abi.invalid && form.submitted" formControlName="abi" maxlength="5" [pattern]="'^[0-9]+$'" [readOnly]="readonlyForm"/>
+                                        <div *ngIf="abi.errors?.required  && form.submitted" class="invalid-feedback">
+                                            Campo obbligatorio
+                                        </div>
+                                        <div *ngIf="abi.errors?.pattern  && form.submitted" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="form-group row" *ngIf="checkTipoConto()">
+
+                                <label for="defaultMCA" class="col-2 col-form-label">Default MCA<span>*</span>:</label>
+                                <div class="col-4">
+                                    <select id="defaultMCA" class="form-control" [class.is-invalid]="defaultMCA.invalid && form.submitted" formControlName="defaultMCA">
+                                        <option [ngValue]="undefined">Tutti</option>
+                                        <option *ngFor="let t of tipiDefaultMCA" [value]="t.codice">{{t.descrizione}}</option>
+                                    </select>
+                                    <div *ngIf="defaultMCA.errors?.value  && form.submitted" class="invalid-feedback">
+                                        Campo obbligatorio
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+
+                                <label for="flagPressoBDI" class="col-2 col-form-label">Presso BDI:</label>
+                                <div class="col-4">
+                                    <input id="flagPressoBDI" class="form-control" [value]="getPressoBDIValue()" [readOnly]="true"/>
+                                </div>
+
+                                <label for="flagInserimentoManuale" class="col-2 col-form-label">Flag Inserimento Manuale:</label>
+                                <div class="col-4">
+                                    <input id="flagInserimentoManuale" class="form-control" [value]="getFlagInserimentoManualeValue()" [readOnly]="true"/>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="indResidenza" class="col-2 col-form-label">Indicatore di Residenza:</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input id="indResidenza" class="form-control" formControlName="indResidenza" maxlength="5" readonly="true"/>
+                                    </div>
+                                </div>
+
+                                <label for="catEconomica" class="col-2 col-form-label">Categoria Economica:</label>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input id="catEconomica" class="form-control" formControlName="catEconomica" readonly="true"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="dataApertura" class="col-2 col-form-label">Data Apertura<span>*</span>:</label>
+                                <div class="col-4">
+                                    <div class="input-group" *ngIf="!readonlyForm; else inputDataApertuta">
+                                        <input id="dataApertura" class="form-control" [class.is-invalid]="dataApertura.invalid && (form.submitted || (dataApertura.dirty || dataApertura.touched))" placeholder="yyyy-mm-dd" formControlName="dataApertura"  bdiDatepicker #datepickerDA="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" [minDate]="minDate" [maxDate]="maxDate"/>
+                                        <div *ngIf="!readonlyForm" class="input-group-append" (click)="datepickerDA.toggle()" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                        </div>
+                                        <div  *ngIf="!!dataApertura.value && !readonlyForm"  class="input-group-append" (click)="reset('dataApertura')" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                        </div>
+                                        <div *ngIf="dataApertura.errors?.dateformat && (dataApertura.dirty || dataApertura.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataApertura.errors?.daterange && (dataApertura.dirty || dataApertura.touched)" class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                        <div *ngIf="dataApertura.errors?.mindate  && (dataApertura.dirty || dataApertura.touched)" class="invalid-feedback">
+                                            Data inferiore al limite inferiore consentito (data apertuta Party): {{formatterUtils.dateToString(minDate)}}
+                                        </div>
+                                        <div *ngIf="dataApertura.errors?.maxdate  && (dataApertura.dirty || dataApertura.touched)" class="invalid-feedback">
+                                            Data superiore al limite superiore consentito (data chiusura Party): {{formatterUtils.dateToString(maxDate)}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #inputDataApertuta>
+                                    <input class="form-control" [value]="getDataAperturaValue()" [readOnly]="true"/>
+                                </ng-template>
+
+                                <label for="dataChiusura" class="col-2 col-form-label">Data Chiusura:</label>
+                                <div class="col-4">
+                                    <div class="input-group" *ngIf="!readonlyForm; else inputDataChiusura" >
+                                        <input id="dataChiusura" class="form-control" [class.is-invalid]="dataChiusura.invalid && (form.submitted || (dataChiusura.dirty || dataChiusura.touched))"  placeholder="yyyy-mm-dd" formControlName="dataChiusura"  bdiDatepicker #datepickerDC="bdiDatepicker" maxlength="10" style="background-color: #ffffff !important" [minDate]="minDate"/>
+                                        <div class="input-group-append" (click)="datepickerDC.toggle()" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                        <div  *ngIf="!!dataChiusura.value"  class="input-group-append" [class.is-invalid]="dataChiusura.invalid && form.submitted" (click)="reset('dataChiusura')" style="cursor: pointer;">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+                                        </div>
+                                        <div *ngIf="dataChiusura.errors?.dateformat && (dataChiusura.dirty || dataChiusura.touched)" class="invalid-feedback">
+                                            Campo non valido
+                                        </div>
+                                        <div *ngIf="dataChiusura.errors?.daterange && (dataChiusura.dirty || dataChiusura.touched)" class="invalid-feedback">
+                                            Intervallo non valido
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #inputDataChiusura>
+                                    <input class="form-control" [value]="getDataChiusuraValue()" [readOnly]="true"/>
+                                </ng-template>
+
+                            </div>
+
+
+                            <div class="row mb-2">
+                                <div class="col-3">
+                                    <button routerLink="{{backUrl}}" [queryParams]="{back:true}" class="btn btn-block btn-primary" type="button" [disabled]="readonlyForm">Indietro</button>
+                                </div>
+                                <div class="col-6"></div>
+
+                                <div class="col-3">
+                                    <button class="btn btn-block btn-primary" type="submit" [disabled]="readonlyForm">Salva</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <ng-template #waiting>
+        <gepa-spinning-loader></gepa-spinning-loader>
+    </ng-template>
+</div>
+
+<ng-template #confirmModal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mfiModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h4 class="modal-title">Conferma</h4>
+        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        Si sta confermando l'inserimento. Procedere?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Annulla</button>
+        <button type="button" class="btn btn-primary" (click)="confirm()">Conferma</button>
+    </div>
+</ng-template>

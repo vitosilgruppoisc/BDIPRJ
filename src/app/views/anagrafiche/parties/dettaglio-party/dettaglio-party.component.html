@@ -1,0 +1,73 @@
+<div class="animated fadeIn">
+    <div class="card card-accent-primary shadow">
+        <div class="card-header">
+            <strong><i class="fas fa-info-circle"></i> Dettaglio Party </strong>
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="!(showSpinner$ | async); else waiting">
+
+                <div class="alert alert-danger" role="alert" *ngIf="isError">
+                    {{ messageError }}
+                </div>
+
+                <div class="alert alert-success" role="alert" *ngIf="isResultOk">
+                    Operazione correttamente effettuata.
+                </div>
+
+
+                <div class="card" *ngIf="!!infoPanelModel">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Party</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-info-panel [model]="infoPanelModel"></app-info-panel>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Lista dei Conti del Party</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-generic-table *ngIf="showTableConti" [model]="contiModel"></app-generic-table>
+                        <br/>
+                        <div class="row" *ngIf="showButtonAggiungiConto">
+                            <div class="col-9"></div>
+                            <div class="col-3">
+                                <button class="btn btn-block btn-primary" type="button" (click)="goToInserimentoConto()">Aggiungi Conto</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="!!isAnsy">
+                    <div class="card-header">
+                        <strong><i class="fal fa-info-square"></i>Lista dei Conti del Party As Settlment Bank</strong>
+                    </div>
+                    <div class="card-body">
+                        <app-generic-table *ngIf="showTableContiAsSettlemnetBank" [model]="contiAsSettlemnetBankModel"></app-generic-table>
+                        <br/>
+                        <div class="row" *ngIf="showButtonAssociaConto">
+                            <div class="col-9"></div>
+                            <div class="col-3">
+                                <button class="btn btn-block btn-primary" type="button" (click)="goToAssociaConto()">Associa Conto</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <button routerLink="{{backUrl}}" [queryParams]="{back:true}"class="btn btn-block btn-primary" type="button">Indietro</button>
+                    </div>
+                </div>
+
+            </ng-container>
+
+            <ng-template #waiting>
+                <gepa-spinning-loader></gepa-spinning-loader>
+            </ng-template>
+
+        </div>
+    </div>
+</div>

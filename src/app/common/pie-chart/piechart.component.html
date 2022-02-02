@@ -1,0 +1,24 @@
+<div class="container" aligh="center">
+    <div class="card">
+        <div class="card-body">
+            <div bdiChart [options]="_internalGraphData" *ngIf="showChart"></div>
+            <!-- <div bdiChart [options]="_internalLegendData" *ngIf="showLegend" class="legend"
+                (chartLegendSelectChanged)="legendSelectChanged($event)"></div> -->
+                   <tr *ngFor="let elementoLegenda of chartData; index as i">
+                        <td  class="legendType">
+                            <button type="button" (click)="legendSelectChanged(elementoLegenda)" class="btn btn-primary"[style.background-color]='elementoLegenda.color'></button>
+                            {{elementoLegenda.name}} - {{elementoLegenda.value}}
+                        (<ng-container *ngFor="let id of elementoLegenda.idTipiOperazione">
+                            <a style="cursor:pointer;"(click)="legendSelectChanged(elementoLegenda)">{{id}}</a>,
+                            <!-- <li ><b>{{id}}</b></li> -->
+                        </ng-container>)
+                    </td>
+                    </tr>
+              </div>
+        </div>
+
+            
+   
+
+    
+</div>
