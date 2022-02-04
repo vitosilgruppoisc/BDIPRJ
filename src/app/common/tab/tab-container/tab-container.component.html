@@ -1,21 +1,29 @@
-<p>tab-container works!</p>
-
-<bdi-alert type="danger" >
-    <strong><div [innerHTML]="errorMessage"></div></strong>
-</bdi-alert>
-<bdi-alert type="danger" >
-    <h5>Segnalazioni</h5>
-    <hr>
-    <ul class="list-group">
-        <li class="list-group-item list-group-item-danger" ><strong></strong> - </li>
-    </ul> 
-</bdi-alert>
 <bdi-tab-view (onTabChange)="tabChange($event)">
     <bdi-tab id="dettaglio">
         <div *bdi-tab-title>Dettaglio movimento</div>
+        <div *bdi-tab-content>
+            <!-- <gepa-dettaglio-movimento-editor [dettaglioForm]="dettaglio" [id]="id" [action]="action" [isSubmitted]="isSubmitted" index="tab"></gepa-dettaglio-movimento-editor>
+            <div class="row">
+                <div class="col-12 text-left">
+                    <button *ngIf="action!='detail'" type="button" class="btn btn-sm btn-secondary" routerLink="/movimenti/gestione-movimenti"><i class="fas fa-times"></i> Annulla</button>
+                </div>
+            </div> -->
+        </div>
       
     </bdi-tab>
     <bdi-tab id="ordinante">
+        <div *bdi-tab-title>Ordinante</div>
+        <div *bdi-tab-content>
+            <!-- <gepa-dettaglio-movimento-editor [dettaglioForm]="dettaglio" [id]="id" [action]="action" [isSubmitted]="isSubmitted" index="tab"></gepa-dettaglio-movimento-editor>
+            <div class="row">
+                <div class="col-12 text-left">
+                    <button *ngIf="action!='detail'" type="button" class="btn btn-sm btn-secondary" routerLink="/movimenti/gestione-movimenti"><i class="fas fa-times"></i> Annulla</button>
+                </div>
+            </div> -->
+        </div>
+      
+    </bdi-tab>
+    <!-- <bdi-tab id="ordinante">
         <div *bdi-tab-title>Ordinante</div>
         
     </bdi-tab>
@@ -38,5 +46,20 @@
     <bdi-tab id="riepilogo">
         <div *bdi-tab-title>Riepilogo</div>
        
-    </bdi-tab>
+    </bdi-tab> -->
 </bdi-tab-view>
+
+<ng-template #myModal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <h4 class="modal-title">Avviso!</h4>
+       
+    </div>
+    <div class="modal-body">
+        <p>{{modalText}}</p>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="!isWarning" type="button" class="btn btn-primary" (click)="close()">OK</button>
+        <button *ngIf="isWarning" type="button" class="btn btn-primary" (click)="cancel()">No</button>
+        <button *ngIf="isWarning" type="button" class="btn btn-primary" (click)="confirm()">OK</button>
+    </div>
+</ng-template>

@@ -229,6 +229,7 @@ export class RicercaOperazioniComponent implements OnInit {
       columnDefs: this.buildColumnDef(),
       enableCsvExport: true,
       enablePdfExport: true,
+      
       enableColumnSelection: false
     };
   }
